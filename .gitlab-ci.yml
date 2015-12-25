@@ -1,6 +1,6 @@
 before_script:
     - python -V
-    - apt-get install python-pip
+    - sudo apt-get install python-pip
     - pip install tornado
     
 types:
