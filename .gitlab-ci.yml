@@ -1,0 +1,16 @@
+before_script:
+    - apt-get update -qq && apt-get install -y -qq sqlite3 python-pip
+    - python -v
+    - pip install tornado
+    
+types:
+    - build
+    - test
+    
+build_app:
+    type: build
+    script: echo Building!
+    
+test_app:
+    type: test
+    script: python -v
