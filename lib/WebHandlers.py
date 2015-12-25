@@ -23,3 +23,8 @@ class Home(BaseHandler):
         if alarms is None:
             alarms = ''
         self.render('home.html', alarms=alarms, count=len(alarms))
+
+
+class Add(BaseHandler):
+    def get(self):
+        self.render('add.html')

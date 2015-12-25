@@ -5,8 +5,9 @@ from lib import WebHandlers
 
 
 class Alarm(WebHandlers.BaseHandler):
-    def get(self):
-        self.write(200)
+    def post(self):
+        data = self.request.body
+
 
 class Heartbeat(WebHandlers.BaseHandler):
     def get(self):
