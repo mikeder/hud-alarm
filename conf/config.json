@@ -1,0 +1,21 @@
+{
+  "client": {
+    "title": "HUD Alert",
+    "static_path": "static",
+    "template_path": "templates",
+    "check_interval": "5000",
+    "max_missed_beats": 3,
+    "documentation": ""
+  },
+  "database": {
+    "name": "hud-alarm.db",
+    "version": 1
+  },
+  "logging": {
+    "log_location": "/var/log/hud-alarm/",
+    "log_level": "DEBUG"
+  },
+  "server": {
+    "port": 8001
+  }
+}
