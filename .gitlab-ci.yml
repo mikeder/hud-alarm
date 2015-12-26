@@ -15,4 +15,4 @@ build_app:
     
 test_app:
     type: test
-    script: python -v
+    script: python -V
