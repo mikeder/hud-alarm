@@ -1,6 +1,6 @@
 before_script:
     - python -V
-    - apt-get install -y curl
+    - sudo apt-get install -y curl
     - curl https://bootstrap.pypa.io/get-pip.py 
     - python get-pip.py
     - pip install tornado
