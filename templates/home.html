@@ -1,6 +1,52 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <H3><BR>Alarm Entries: {{ count }}</H3>
-    <script src="{{ static_url("js/home.js") }}"></script>
+    <link href="{{ static_url('css/jquery.datetimepicker.css') }}" rel="stylesheet">
+    <div id="banner" class="ui-widget">
+    </div>
+
+    <div id="dialog-form" title="Add New Event">
+      <p class="validateTips">All form fields are required.</p>
+
+      <form>
+        <fieldset>
+          <input type="datetime" name="datetime" id="datetime" placeholder="Date & Time" class="text ui-widget-content ui-corner-all"><br>
+          <input type="text" name="title" id="title" placeholder="Title" class="text ui-widget-content ui-corner-all"><br>
+          <textarea name="description" id="description" placeholder="Description" class="text ui-widget-content ui-corner-all"></textarea><br>
+          <!-- Allow form submission with keyboard without duplicating the dialog button -->
+          <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+        </fieldset>
+      </form>
+    </div>
+    <span id="clock"></span>
+    <div id="event-contain" class="ui-widget">
+      <h3>Existing Events:</h3>
+      <table id="events" class="ui-widget ui-widget-content">
+        <thead>
+          <tr class="ui-widget-header ">
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>DateTime</th>
+            <th>Countdown</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for alarm in alarms %}
+          <tr>
+            <td>{{ alarm['id'] }}</td>
+            <td>{{ alarm['title'] }}</td>
+            <td>{{ alarm['description'] }}</td>
+            <td>{{ alarm['datetime'] }}</td>
+            <td data-countdown="{{ alarm['datetime'] }}"></td>
+          </tr>
+        {% end %}
+        </tbody>
+      </table>
+    </div>
+    <br>
+    <button id="addEvent" class="btn btn-success">Add New</button>
+    <script src="{{ static_url('js/jquery.datetimepicker.full.js') }}"></script>
+    <script src="{{ static_url('js/jquery.countdown.js') }}"></script>
+    <script src="{{ static_url('js/home.js') }}"></script>
 {% end %}

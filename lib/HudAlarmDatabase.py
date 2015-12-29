@@ -11,15 +11,15 @@ class AlarmDatabase:
 
     ## Alarm Table Methods
     def addAlarm(self, a_alarm):
-        sql = "INSERT INTO alarm(datetime,type,description,reoccurring) VALUES('{0}','{1}','{2}','{3}')".\
+        sql = "INSERT INTO alarm(datetime,title,description,reoccurring) VALUES('{0}','{1}','{2}','{3}')".\
             format(a_alarm['datetime'],
-                   a_alarm['type'],
+                   a_alarm['title'],
                    a_alarm['description'],
                    a_alarm['reoccurring'])
         self.__updateDB(sql)
 
     def getAlarms(self):
-        sql = "SELECT * FROM alarm ORDER BY datetime DESC"
+        sql = "SELECT * FROM alarm ORDER BY datetime ASC"
         return self.__queryDB(sql)
 
 
@@ -120,7 +120,7 @@ class AlarmDatabase:
             CREATE TABLE IF NOT EXISTS
             alarm(id INTEGER PRIMARY KEY,
             datetime DATETIME,
-            type TEXT,
+            title TEXT,
             description TEXT,
             reoccurring INTEGER)'''
         cursor = self.database.cursor()

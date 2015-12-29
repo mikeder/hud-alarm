@@ -6,8 +6,13 @@ from lib import WebHandlers
 
 class Alarm(WebHandlers.BaseHandler):
     def post(self):
-        data = self.request.body
-
+        data = json.loads(self.request.body)
+        data['reoccurring'] = False
+        print data
+        try:
+            self.database.addAlarm(data)
+        except Exception as e:
+            print e
 
 class Heartbeat(WebHandlers.BaseHandler):
     def get(self):
@@ -32,8 +37,10 @@ class Heartbeat(WebHandlers.BaseHandler):
         }
         if active:
             self.database.updateClient(client)
+            self.set_status(200,"Client updated")
         else:
             self.database.addClient(client)
+            self.set_status(201,"Client added")
         self.logger.debug('Client %s, Focus %s' % (remote_ip,hasFocus))
 
     def __checkActive(self, a_ip):
@@ -44,7 +51,6 @@ class Heartbeat(WebHandlers.BaseHandler):
                 endTime = datetime.datetime.strptime(client['endTime'], "%Y-%m-%d %H:%M:%S.%f")
                 if lastMinute < endTime:
                     return 1
-                else:
-                    return 0
+            return 0
         else:
             return 0

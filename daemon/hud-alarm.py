@@ -5,7 +5,7 @@ sys.path.append(cwd)
 
 import getopt
 import json
-from lib import AlarmAPI
+from lib import HudAlarmAPI
 from lib import HudAlarmDatabase
 from lib import WebHandlers
 import logging
@@ -43,9 +43,8 @@ class Application(tornado.web.Application):
 
         routes = [
             (r'/', WebHandlers.Home),
-            (r'/add', WebHandlers.Add),
-            (r'/api/alarm', AlarmAPI.Alarm),
-            (r'/api/heartbeat', AlarmAPI.Heartbeat),
+            (r'/api/alarm', HudAlarmAPI.Alarm),
+            (r'/api/heartbeat', HudAlarmAPI.Heartbeat),
             (r'.*', WebHandlers.BaseHandler)
         ]
 
