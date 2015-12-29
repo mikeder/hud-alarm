@@ -11,6 +11,23 @@ $('[data-countdown]').each(function() {
    });
 });
 
+// Delete Button
+$('#delete').click(function(e) {
+    var alarm_id = $('#alarm_id').val();
+    e.preventDefault();
+    $.ajax({
+        url: '/api/alarm/' + alarm_id,
+        type: 'DELETE',
+        success: function(data) {
+            location.reload(true);
+        },
+        error: function(data) {
+            alert(JSON.parse(data.responseText)['message']);
+            setTimeout(function(){location.reload(true);}, 10);
+        }
+    });
+});
+
 //Error reporting
 function showConnectionError(){
     var msg = "<p align='center'><strong>Error connecting to server.</strong></p>"
@@ -28,97 +45,96 @@ function clearError(){
 
 //Begin JQuery UI Modal Dialog
 $(function() {
-var dialog, form,
+    var dialog, form,
 
-  // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
-  emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-  title = $( "#title" ),
-  description = $( "#description" ),
-  datetime = $( "#datetime" ).datetimepicker({
-    dateFormat: 'mm-dd-yy',
-    timeFormat: 'HH:mm'
-    }),
-  allFields = $( [] ).add( title ).add( description ).add( datetime ),
-  tips = $( ".validateTips" );
+        title = $( "#title" ),
+        description = $( "#description" ),
+        datetime = $( "#datetime" ).datetimepicker({
+            dateFormat: 'mm-dd-yy',
+            timeFormat: 'HH:mm',
+            minDate: '0'
+        }),
+        allFields = $( [] ).add( title ).add( description ).add( datetime ),
+        tips = $( ".validateTips" );
 
-function updateTips( t ) {
-  tips
-    .text( t )
-    .addClass( "ui-state-highlight" );
-  setTimeout(function() {
-    tips.removeClass( "ui-state-highlight", 1500 );
-  }, 500 );
-}
+    function updateTips( t ) {
+        tips
+        .text( t )
+        .addClass( "ui-state-highlight" );
+        setTimeout(function() {
+            tips.removeClass( "ui-state-highlight", 1500 );
+        }, 500 );
+    }
 
-function checkLength( o, n, min, max ) {
-  if ( o.val().length > max || o.val().length < min ) {
-    o.addClass( "ui-state-error" );
-    updateTips( "Length of " + n + " must be between " +
-      min + " and " + max + "." );
-    return false;
-  } else {
-    return true;
-  }
-}
+    function checkLength( o, n, min, max ) {
+        if ( o.val().length > max || o.val().length < min ) {
+            o.addClass( "ui-state-error" );
+            updateTips( "Length of " + n + " must be between " +
+            min + " and " + max + "." );
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-function checkRegexp( o, regexp, n ) {
-  if ( !( regexp.test( o.val() ) ) ) {
-    o.addClass( "ui-state-error" );
-    updateTips( n );
-    return false;
-  } else {
-    return true;
-  }
-}
+    function checkRegexp( o, regexp, n ) {
+        if ( !( regexp.test( o.val() ) ) ) {
+        o.addClass( "ui-state-error" );
+        updateTips( n );
+        return false;
+        } else {
+        return true;
+        }
+    }
 
-function addEvent() {
-  var valid = true;
-  allFields.removeClass( "ui-state-error" );
-  var data = { 'title': title.val(),
-               'description': description.val(),
-               'datetime': datetime.val() }
-  if ( valid ) {
-    $.ajax({
-        url: '/api/alarm',
-        type: 'POST',
-        data: JSON.stringify(data),
-        success: function(data) {
-            showSuccess();
-            setTimeout(function(){location.reload(true);}, 100);
+    function addEvent() {
+        var valid = true;
+        allFields.removeClass( "ui-state-error" );
+        var data = { 'title': title.val(),
+        'description': description.val(),
+        'datetime': datetime.val() }
+        if ( valid ) {
+            $.ajax({
+                url: '/api/alarm',
+                type: 'POST',
+                data: JSON.stringify(data),
+            success: function(data) {
+                showSuccess();
+                setTimeout(function(){location.reload(true);}, 100);
+            },
+            error: function(data) {
+                showConnectionError();
+                setTimeout(function(){location.reload(true);}, 10);
+            }
+            });
+            dialog.dialog( "close" );
+        }
+        return valid;
+    }
+
+    dialog = $( "#dialog-form" ).dialog({
+        autoOpen: false,
+        height: 500,
+        width: 455,
+        modal: true,
+        buttons: {
+            "Create new event": addEvent,
+            Cancel: function() {
+                dialog.dialog( "close" );
+            }
         },
-        error: function(data) {
-            showConnectionError();
-            setTimeout(function(){location.reload(true);}, 10);
+        close: function() {
+            form[ 0 ].reset();
+            allFields.removeClass( "ui-state-error" );
         }
     });
-    dialog.dialog( "close" );
-  }
-  return valid;
-}
 
-dialog = $( "#dialog-form" ).dialog({
-  autoOpen: false,
-  height: 300,
-  width: 350,
-  modal: true,
-  buttons: {
-    "Create new event": addEvent,
-    Cancel: function() {
-      dialog.dialog( "close" );
-    }
-  },
-  close: function() {
-    form[ 0 ].reset();
-    allFields.removeClass( "ui-state-error" );
-  }
-});
+    form = dialog.find( "form" ).on( "submit", function( event ) {
+        event.preventDefault();
+        addEvent();
+    });
 
-form = dialog.find( "form" ).on( "submit", function( event ) {
-  event.preventDefault();
-  addUser();
-});
-
-$( "#addEvent" ).button().on( "click", function() {
-  dialog.dialog( "open" );
-});
+    $( "#addEvent" ).button().on( "click", function() {
+        dialog.dialog( "open" );
+    });
 });

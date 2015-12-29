@@ -1,20 +1,23 @@
 import json
 import logging
 import datetime
+import markdown
 from lib import WebHandlers
 
 class Alarm(WebHandlers.BaseHandler):
     def post(self):
         data = json.loads(self.request.body)
         data['alarm_id'] = self.generator.random_string()
-        print data
+        data['description'] = markdown.markdown(data['description'])
         try:
             self.database.addAlarm(data)
         except Exception as e:
             print e
 
     def delete(self, a_alarm):
-        pass
+        self.logger.debug('Deleting: %s from database' % a_alarm)
+        self.database.deleteAlarm(a_alarm)
+        self.set_status(200,'success')
 
 class Heartbeat(WebHandlers.BaseHandler):
     def get(self):
@@ -44,15 +47,3 @@ class Heartbeat(WebHandlers.BaseHandler):
             self.database.updateClient(client)
             self.set_status(200,"Client updated")
         self.logger.debug('Client %s, Focus %s' % (remote_ip,hasFocus))
-
-    def __checkActive(self, a_ip):
-        clients = self.database.getClients(a_ip)
-        if clients:
-            for client in clients:
-                lastMinute = datetime.datetime.now()-datetime.timedelta(minutes=5)
-                endTime = datetime.datetime.strptime(client['endTime'], "%Y-%m-%d %H:%M:%S.%f")
-                if lastMinute < endTime:
-                    return 1
-            return 0
-        else:
-            return 0

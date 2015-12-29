@@ -10,9 +10,10 @@
 
       <form>
         <fieldset>
-          <input type="datetime" name="datetime" id="datetime" placeholder="Date & Time" class="text ui-widget-content ui-corner-all"><br>
-          <input type="text" name="title" id="title" placeholder="Title" class="text ui-widget-content ui-corner-all"><br>
-          <textarea name="description" id="description" placeholder="Description" class="text ui-widget-content ui-corner-all"></textarea><br>
+          <input type="datetime" name="datetime" id="datetime" placeholder="Date & Time" class="text ui-widget-content ui-corner-all"><br><br>
+          <input type="text" name="title" id="title" placeholder="Title" class="text ui-widget-content ui-corner-all"><br><hr>
+          <textarea name="description" id="description" placeholder="Description"
+                    class="text ui-widget-content ui-corner-all" rows="10" cols="50"></textarea><br>
           <!-- Allow form submission with keyboard without duplicating the dialog button -->
           <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
         </fieldset>
@@ -28,8 +29,13 @@
             <p>
                 <b>Time Remaining:</b><h4 data-countdown="{{ alarm['datetime'] }}"></h4><br>
                 <b>Perform the following:</b><br>
-                {{ alarm['description'] }}
-                <a href="/alarm/{{ alarm['alarm_id'] }}" style="float:right">Alarm ID: {{ alarm['alarm_id'] }}</a>
+                {% raw alarm['description'] %}
+                <a href="#"
+                   style="float:right"
+                   onclick="window.open('/alarm/{{ alarm['alarm_id'] }}','targetWindow','scrollbars=yes,resizable=yes,width=400,height=380')">
+                    Alarm ID: {{ alarm['alarm_id'] }}</a><br><br><br><hr>
+                <input type="hidden" id="alarm_id" value="{{ alarm['alarm_id'] }}"/>
+                <button id="delete" class="btn btn-danger" style="float: right;">Delete</button>
             </p>
           </div>
         {% end %}
@@ -37,7 +43,5 @@
     </div>
     <br>
     <button id="addEvent" class="btn btn-success">Add New</button>
-    <script src="{{ static_url('js/jquery.datetimepicker.full.js') }}"></script>
-    <script src="{{ static_url('js/jquery.countdown.js') }}"></script>
     <script src="{{ static_url('js/home.js') }}"></script>
 {% end %}

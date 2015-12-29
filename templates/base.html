@@ -41,18 +41,18 @@
         </div>
       </div>
     </nav>
-
+    <!-- LOAD ALL THE SCRIPTS!!! -->
+    <script src="{{ static_url('js/jquery.js') }}"></script>
+    <script src="{{ static_url('js/bootstrap.min.js') }}"></script>
+    <script src="{{ static_url('js/jquery.datetimepicker.full.js') }}"></script>
+    <script src="{{ static_url('js/jquery.countdown.js') }}"></script>
+    <script src="{{ static_url('js/jquery-ui.js') }}"></script>
     <div id="body">
-      <script src="{{ static_url('js/jquery.js') }}"></script>
-      <script src="{{ static_url('js/jquery-ui.js') }}"></script>
       <div id="banner"></div>
       <div id="content">
         {% block body %}{% end %}
       </div>
     </div>
-
     {% block bottom %}{% end %}
-    <!-- Bootstrap core JavaScript -->
-    <script src="{{ static_url('js/bootstrap.min.js') }}"></script>
   </body>
 </html>

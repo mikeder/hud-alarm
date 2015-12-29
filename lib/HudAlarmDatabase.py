@@ -18,8 +18,16 @@ class AlarmDatabase:
                    a_alarm['alarm_id'])
         self.__updateDB(sql)
 
-    def getAlarms(self):
-        sql = "SELECT * FROM alarm ORDER BY datetime ASC"
+    def deleteAlarm(self, a_alarm_id):
+        sql = "DELETE FROM alarm WHERE alarm_id = '{0}'".format(a_alarm_id)
+        response = self.__updateDB(sql)
+        return response
+
+    def getAlarms(self, a_alarm_id=None):
+        if a_alarm_id:
+            sql = "SELECT * FROM alarm where alarm_id = '{0}'".format(a_alarm_id)
+        else:
+            sql = "SELECT * FROM alarm ORDER BY datetime ASC"
         return self.__queryDB(sql)
 
 
