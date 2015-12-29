@@ -11,11 +11,11 @@ class AlarmDatabase:
 
     ## Alarm Table Methods
     def addAlarm(self, a_alarm):
-        sql = "INSERT INTO alarm(datetime,title,description,reoccurring) VALUES('{0}','{1}','{2}','{3}')".\
+        sql = "INSERT INTO alarm(datetime,title,description,alarm_id) VALUES('{0}','{1}','{2}','{3}')".\
             format(a_alarm['datetime'],
                    a_alarm['title'],
                    a_alarm['description'],
-                   a_alarm['reoccurring'])
+                   a_alarm['alarm_id'])
         self.__updateDB(sql)
 
     def getAlarms(self):
@@ -122,7 +122,7 @@ class AlarmDatabase:
             datetime DATETIME,
             title TEXT,
             description TEXT,
-            reoccurring INTEGER)'''
+            alarm_id TEXT)'''
         cursor = self.database.cursor()
         cursor.execute(sql)
         self.database.commit()

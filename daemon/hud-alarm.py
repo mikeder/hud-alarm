@@ -43,6 +43,8 @@ class Application(tornado.web.Application):
 
         routes = [
             (r'/', WebHandlers.Home),
+            (r'/alarm', WebHandlers.Alarm),
+            (r'/test', WebHandlers.Test),
             (r'/api/alarm', HudAlarmAPI.Alarm),
             (r'/api/heartbeat', HudAlarmAPI.Heartbeat),
             (r'.*', WebHandlers.BaseHandler)

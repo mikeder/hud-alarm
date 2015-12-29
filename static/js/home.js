@@ -1,26 +1,8 @@
-// Check focus of page
-var hasFocus = '1';
-window.onblur = function () {hasFocus = '0';}
-window.onfocus = function () {hasFocus = '1';}
+// Accordion of upcoming events
+$(function() {
+    $( "#accordion" ).accordion();
+  });
 
-// Start heartbeat
-window.onload = function poll() {
-    setTimeout( function() {
-        $.ajax({
-            url: '/api/heartbeat',
-            type: 'POST',
-            data: hasFocus,
-            success: function(data) {
-                clearError();
-                poll();  //call your function again after successfully calling the first time.
-            },
-            error: function(data) {
-                showConnectionError();
-                setTimeout(poll(), 5000);
-            }
-        });
-    }, 5000);
-};
 // Countdown
 $('[data-countdown]').each(function() {
    var $this = $(this), finalDate = $(this).data('countdown');
@@ -28,6 +10,7 @@ $('[data-countdown]').each(function() {
      $this.html(event.strftime('%D days %H:%M:%S'));
    });
 });
+
 //Error reporting
 function showConnectionError(){
     var msg = "<p align='center'><strong>Error connecting to server.</strong></p>"

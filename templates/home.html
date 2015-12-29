@@ -20,29 +20,20 @@
     </div>
     <span id="clock"></span>
     <div id="event-contain" class="ui-widget">
-      <h3>Existing Events:</h3>
-      <table id="events" class="ui-widget ui-widget-content">
-        <thead>
-          <tr class="ui-widget-header ">
-            <th>ID</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>DateTime</th>
-            <th>Countdown</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for alarm in alarms %}
-          <tr>
-            <td>{{ alarm['id'] }}</td>
-            <td>{{ alarm['title'] }}</td>
-            <td>{{ alarm['description'] }}</td>
-            <td>{{ alarm['datetime'] }}</td>
-            <td data-countdown="{{ alarm['datetime'] }}"></td>
-          </tr>
+      <h3>Upcoming Events:</h3>
+      <div id="accordion">
+          {% for alarm in alarms %}
+          <h3>{{ alarm['title'] }} - {{ alarm['datetime'] }}</h3>
+          <div>
+            <p>
+                <b>Time Remaining:</b><h4 data-countdown="{{ alarm['datetime'] }}"></h4><br>
+                <b>Perform the following:</b><br>
+                {{ alarm['description'] }}
+                <a href="/alarm/{{ alarm['alarm_id'] }}" style="float:right">Alarm ID: {{ alarm['alarm_id'] }}</a>
+            </p>
+          </div>
         {% end %}
-        </tbody>
-      </table>
+      </div>
     </div>
     <br>
     <button id="addEvent" class="btn btn-success">Add New</button>
