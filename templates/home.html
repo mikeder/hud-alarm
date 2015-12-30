@@ -2,8 +2,7 @@
 
 {% block body %}
     <link href="{{ static_url('css/jquery.datetimepicker.css') }}" rel="stylesheet">
-    <div id="banner" class="ui-widget">
-    </div>
+    <div id="banner" class="ui-widget"></div>
 
     <div id="dialog-form" title="Add New Event">
       <p class="validateTips">All form fields are required.</p>
@@ -19,27 +18,26 @@
         </fieldset>
       </form>
     </div>
-    <span id="clock"></span>
-    <div id="event-contain" class="ui-widget">
-      <h3>Upcoming Events:</h3>
-      <div id="accordion">
-          {% for alarm in alarms %}
-          <h3>{{ alarm['title'] }} - {{ alarm['datetime'] }}</h3>
-          <div>
-            <p>
-                <b>Time Remaining:</b><h4 data-countdown="{{ alarm['datetime'] }}"></h4><br>
-                <b>Perform the following:</b><br>
-                {% raw alarm['description'] %}
-                <a href="#"
-                   style="float:right"
-                   onclick="window.open('/alarm/{{ alarm['alarm_id'] }}','targetWindow','scrollbars=yes,resizable=yes,width=400,height=380')">
-                    Alarm ID: {{ alarm['alarm_id'] }}</a><br><br><br><hr>
-                <input type="hidden" id="alarm_id" value="{{ alarm['alarm_id'] }}"/>
-                <button id="delete" class="btn btn-danger" style="float: right;">Delete</button>
-            </p>
-          </div>
-        {% end %}
-      </div>
+    <h3>Upcoming Events:</h3>
+    <div id="accordion">
+      {% for idx, alarm in enumerate(alarms) %}
+      <h3>{{ alarm['title'] }} - {{ alarm['datetime'] }}</h3>
+        <article data-id="event{{ idx }}"
+                 data-countdown="{{ alarm['datetime'] }}"
+                 data-alarmid="{{ alarm['alarm_id'] }}"
+                 data-title="{{ alarm['title'] }}"
+                 data-description="{% raw alarm['description'] %}">
+
+            <b>Time Remaining:</b><h4  id="countdown{{ idx }}"></h4>
+            <b>Perform the following:</b><br>
+            {% raw alarm['description'] %}
+            <a href="#"
+               style="float:right"
+               onclick="window.open('/alarm/{{ alarm['alarm_id'] }}','targetWindow','scrollbars=yes,resizable=yes,width=400,height=380')">
+                Alarm ID: {{ alarm['alarm_id'] }}</a><br><br><hr>
+            <button class="btn btn-danger delete" style="float: right;" value="{{ alarm['alarm_id'] }}">Delete</button>
+        </article>
+    {% end %}
     </div>
     <br>
     <button id="addEvent" class="btn btn-success">Add New</button>

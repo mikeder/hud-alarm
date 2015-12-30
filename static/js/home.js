@@ -1,20 +1,33 @@
 // Accordion of upcoming events
 $(function() {
     $( "#accordion" ).accordion();
-  });
-
-// Countdown
-$('[data-countdown]').each(function() {
-   var $this = $(this), finalDate = $(this).data('countdown');
-   $this.countdown(finalDate, function(event) {
-     $this.html(event.strftime('%D days %H:%M:%S'));
-   });
 });
 
-// Delete Button
-$('#delete').click(function(e) {
-    var alarm_id = $('#alarm_id').val();
-    e.preventDefault();
+// Loop through article elements, add timers to each one
+$('article').each(function( index ) {
+    var $el = $('#countdown' + index),
+        finalDate = $(this).data('countdown'),
+        alarm_id = $(this).data('alarmid');
+        addCountdown( $el, finalDate, alarm_id );
+});
+
+// Add countdown timer to Element
+function addCountdown( $el, finalDate, alarm_id ) {
+    $el.countdown(finalDate, function(event) {
+        $el.html(event.strftime('%D days %H:%M:%S'));
+    })
+        .on('finish.countdown', function(event) {
+            triggerAlarm( alarm_id );
+        });
+}
+// Do this when the countdown ends
+function triggerAlarm( alarm_id ){
+    alert('Alarm ' + alarm_id + ' has been triggered.');
+    deleteAlarm( alarm_id );
+}
+
+// Delete Alarm
+function deleteAlarm( alarm_id ){
     $.ajax({
         url: '/api/alarm/' + alarm_id,
         type: 'DELETE',
@@ -26,27 +39,27 @@ $('#delete').click(function(e) {
             setTimeout(function(){location.reload(true);}, 10);
         }
     });
+}
+
+// Delete Button
+$('.delete').click(function(e) {
+    var alarm_id = $(this).val();
+    e.preventDefault();
+    deleteAlarm( alarm_id );
 });
 
 //Error reporting
-function showConnectionError(){
-    var msg = "<p align='center'><strong>Error connecting to server.</strong></p>"
-    $("#banner").html(msg).addClass('ui-state-error ui-corner-all');
+function showMessage( type, msg ){
+    var newClass = 'ui-state-highlight'
+    if (type == 'error') {
+        newClass = 'ui-state-error'
+    }
+    $("#banner").html(msg).addClass(newClass);
 }
-function showSuccess(){
-    var msg = "<p align='center'><strong>Successfully added new event!</strong></p>"
-    $("#banner").html(msg).addClass('ui-state-highlight ui-corner-all');
-}
-function clearError(){
-    var msg = ""
-    $("#banner").html(msg).removeClass('ui-state-error ui-corner-all');
-}
-
 
 //Begin JQuery UI Modal Dialog
 $(function() {
     var dialog, form,
-
         title = $( "#title" ),
         description = $( "#description" ),
         datetime = $( "#datetime" ).datetimepicker({
@@ -56,36 +69,6 @@ $(function() {
         }),
         allFields = $( [] ).add( title ).add( description ).add( datetime ),
         tips = $( ".validateTips" );
-
-    function updateTips( t ) {
-        tips
-        .text( t )
-        .addClass( "ui-state-highlight" );
-        setTimeout(function() {
-            tips.removeClass( "ui-state-highlight", 1500 );
-        }, 500 );
-    }
-
-    function checkLength( o, n, min, max ) {
-        if ( o.val().length > max || o.val().length < min ) {
-            o.addClass( "ui-state-error" );
-            updateTips( "Length of " + n + " must be between " +
-            min + " and " + max + "." );
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    function checkRegexp( o, regexp, n ) {
-        if ( !( regexp.test( o.val() ) ) ) {
-        o.addClass( "ui-state-error" );
-        updateTips( n );
-        return false;
-        } else {
-        return true;
-        }
-    }
 
     function addEvent() {
         var valid = true;
@@ -99,12 +82,12 @@ $(function() {
                 type: 'POST',
                 data: JSON.stringify(data),
             success: function(data) {
-                showSuccess();
+                showMessage('','Successfully added new event!');
                 setTimeout(function(){location.reload(true);}, 100);
             },
             error: function(data) {
-                showConnectionError();
-                setTimeout(function(){location.reload(true);}, 10);
+                showMessage('error','Error while adding new event, try again.');
+                setTimeout(function(){location.reload(true);}, 100);
             }
             });
             dialog.dialog( "close" );
