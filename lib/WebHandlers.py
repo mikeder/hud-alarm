@@ -34,11 +34,6 @@ class Home(BaseHandler):
         alarms = self.database.getAlarms()
         if alarms is None:
             alarms = ''
-        for alarm in alarms:
-            now = datetime.datetime.now()
-            endTime = datetime.datetime.strptime(alarm['datetime'], "%Y/%m/%d %H:%M")
-            if now > endTime:
-                alarms.remove(alarm)
         self.render('home.html', alarms=alarms, count=len(alarms))
 
 class Test(BaseHandler):

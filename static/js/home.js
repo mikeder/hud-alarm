@@ -48,7 +48,7 @@ $('.delete').click(function(e) {
     deleteAlarm( alarm_id );
 });
 
-//Error reporting
+// Display Banner Message
 function showMessage( type, msg ){
     var newClass = 'ui-state-highlight'
     if (type == 'error') {
