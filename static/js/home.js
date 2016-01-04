@@ -1,3 +1,30 @@
+// Check focus of page
+var hasFocus = '1';
+var url = window.location.href;
+window.onblur = function () {hasFocus = '0';}
+window.onfocus = function () {hasFocus = '1';}
+
+// Start heartbeat
+window.onload = function poll() {
+    setTimeout( function() {
+        var data = { 'hasFocus': hasFocus,
+                     'url': url }
+        $.ajax({
+            url: '/api/heartbeat',
+            type: 'POST',
+            data: JSON.stringify(data),
+            success: function(data) {
+                hideMessage();
+                poll();  //call your function again after successfully calling the first time.
+            },
+            error: function(data) {
+                showMessage('error','Error connecting to server...');
+                setTimeout(poll(), 5000);
+            }
+        });
+    }, 5000);
+};
+
 // Accordion of upcoming events
 $(function() {
     $( "#accordion" ).accordion();
@@ -13,17 +40,36 @@ $('article').each(function( index ) {
 
 // Add countdown timer to Element
 function addCountdown( $el, finalDate, alarm_id ) {
+    var alarmOpened = false;
     $el.countdown(finalDate, function(event) {
         $el.html(event.strftime('%D days %H:%M:%S'));
     })
+        .on('update.countdown', function(event) {
+            var minutesLeft = event.strftime('%M');
+            //checkAlarmOpen();
+            if (minutesLeft < '10' && alarmOpened == false) {
+                triggerAlarmOpen(alarm_id);
+                alarmOpened = true;
+            }
+        })
         .on('finish.countdown', function(event) {
-            triggerAlarm( alarm_id );
+            deleteAlarm( alarm_id );
         });
 }
-// Do this when the countdown ends
-function triggerAlarm( alarm_id ){
-    alert('Alarm ' + alarm_id + ' has been triggered.');
-    deleteAlarm( alarm_id );
+
+// Check if alarm window is already open
+function checkAlarmOpen( alarm_id ) {
+    $.getJSON( '/api/heartbeat')
+        .done(function( data ) {
+            $.each( data.items, function( item ) {
+                console.log(item.url)
+            })
+        })
+}
+
+// Open /alarm endpoint for given ID
+function triggerAlarmOpen( alarm_id ) {
+    window.open('/alarm/' + alarm_id);
 }
 
 // Delete Alarm
@@ -55,6 +101,10 @@ function showMessage( type, msg ){
         newClass = 'ui-state-error'
     }
     $("#banner").html(msg).addClass(newClass);
+}
+
+function hideMessage(){
+    $("#banner").removeClass('ui-state-error ui-corner-all');
 }
 
 //Begin JQuery UI Modal Dialog

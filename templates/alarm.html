@@ -26,17 +26,17 @@
 
   </head>
   <body>
-    <h4>{{ alarm['title'] }} - {{ alarm['datetime'] }}</h4>
-      <div>
+      <div style="text-align:center;">
+        <h4>{{ alarm['title'] }} - {{ alarm['datetime'] }}</h4>
         <p>
             <b>Time Remaining:</b><h4 data-countdown="{{ alarm['datetime'] }}"></h4><br>
             <b>Perform the following:</b><br>
             {% raw alarm['description'] %}<br>
+            <button style="top:50%;" id="close" class="btn btn-success">Close</button>
         </p>
-          <input type="hidden" id="alarm_id">{{ alarm['alarm_id'] }}</input>
+          <audio src="{{ static_url('wav/evac.mp3') }}" preload="auto" id="sound1"></audio>
       </div>
-    <button id="close" class="btn btn-success">Close</button>
-    <button id="delete" class="btn btn-danger" style="float: right;">Delete</button>
+
     <script src="{{ static_url('js/jquery.js') }}"></script>
     <script src="{{ static_url('js/jquery.countdown.js') }}"></script>
     <script src="{{ static_url('js/alarm.js') }}"></script>

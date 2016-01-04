@@ -5,16 +5,9 @@
 
 <span id="clock"></span>
 
-<script>
-var fiveSeconds = new Date().getTime() + 5000;
-$('#clock').countdown(fiveSeconds, function(event) {
-  $(this).html(event.strftime('%D days %H:%M:%S'));
-});
+<audio src="{{ static_url('wav/evac.mp3') }}" preload="auto" id="sound1"></audio>
 
-$('#clock').on('finish.countdown', function(event) {
-    var myWindow = window.open("/alarm", "", fullscreen=1);   // Opens a new window
-    myWindow.focus();
-});
-</script>
+<script src="{{ static_url('js/test.js') }}"></script>
+
 
 {% end %}

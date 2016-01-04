@@ -33,25 +33,30 @@ class AlarmDatabase:
 
     ## Client Table Methods
     def addClient(self, a_client):
-        sql = "INSERT INTO client(startTime, endTime, clientID, hasFocus) VALUES('{0}','{1}','{2}','{3}')".\
+        sql = "INSERT INTO client(startTime, endTime, clientID, hasFocus, url) VALUES('{0}','{1}','{2}','{3}','{4}')".\
             format(a_client['startTime'],
                    a_client['endTime'],
                    a_client['clientID'],
-                   a_client['hasFocus'])
+                   a_client['hasFocus'],
+                   a_client['url'])
         self.__updateDB(sql)
 
-    def getClients(self, a_client=None):
+    def getClients(self, a_client=None, a_url=None):
         if a_client:
-            sql = "SELECT * FROM client where clientID = '{0}'".format(a_client)
+            if a_url:
+                sql = "SELECT * FROM client where clientID = '{0}' AND url = '{1}'".format(a_client, a_url)
+            else:
+                sql = "SELECT * FROM client where clientID = '{0}'".format(a_client)
         else:
             sql = "SELECT * FROM client"
         return self.__queryDB(sql)
 
     def updateClient(self, a_client):
-        sql = "UPDATE client SET endTime = '{0}', hasFocus = '{1}' WHERE clientID = '{2}'".\
+        sql = "UPDATE client SET endTime = '{0}', hasFocus = '{1}' WHERE clientID = '{2}' AND url = '{3}'".\
             format(a_client['endTime'],
                    a_client['hasFocus'],
-                   a_client['clientID'])
+                   a_client['clientID'],
+                   a_client['url'])
         self.__updateDB(sql)
 
 
@@ -142,7 +147,8 @@ class AlarmDatabase:
             startTime TIMESTAMP,
             endTime TIMESTAMP,
             clientID TEXT,
-            hasFocus INTEGER)'''
+            hasFocus INTEGER,
+            url TEXT)'''
         cursor = self.database.cursor()
         cursor.execute(sql)
         self.database.commit()

@@ -30,15 +30,16 @@ class Heartbeat(WebHandlers.BaseHandler):
     def post(self):
         x_real_ip = self.request.headers.get("X-Real-IP")
         remote_ip = x_real_ip or self.request.remote_ip
-        hasFocus = self.request.body
-        existingClient = self.database.getClients(remote_ip)
+        data = json.loads(self.request.body)
+        existingClient = self.database.getClients(remote_ip,data['url'])
         now = datetime.datetime.now()
         end = now + datetime.timedelta(minutes=1)
         client = {
             'startTime': now,
             'endTime': end,
             'clientID': remote_ip,
-            'hasFocus': hasFocus
+            'hasFocus': data['hasFocus'],
+            'url': data['url']
         }
         if existingClient is None:
             self.database.addClient(client)
@@ -46,4 +47,4 @@ class Heartbeat(WebHandlers.BaseHandler):
         else:
             self.database.updateClient(client)
             self.set_status(200,"Client updated")
-        self.logger.debug('Client %s, Focus %s' % (remote_ip,hasFocus))
+        self.logger.debug('Client %s, Focus %s' % (remote_ip,data['hasFocus']))
