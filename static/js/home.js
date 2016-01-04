@@ -104,7 +104,7 @@ function showMessage( type, msg ){
 }
 
 function hideMessage(){
-    $("#banner").removeClass('ui-state-error ui-corner-all');
+    $("#banner").html('').removeClass('ui-state-error ui-corner-all');
 }
 
 //Begin JQuery UI Modal Dialog
