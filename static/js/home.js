@@ -45,9 +45,14 @@ function addCountdown( $el, finalDate, alarm_id ) {
         $el.html(event.strftime('%D days %H:%M:%S'));
     })
         .on('update.countdown', function(event) {
+            var daysLeft = event.strftime('%D');
+            var hoursLeft = event.strftime('%H');
             var minutesLeft = event.strftime('%M');
+            
             //checkAlarmOpen();
-            if (minutesLeft < '10' && alarmOpened == false) {
+            if ( daysLeft == '0' &&
+                 hoursLeft == '0' &&
+                 minutesLeft < '10' && alarmOpened == false) {
                 triggerAlarmOpen(alarm_id);
                 alarmOpened = true;
             }
