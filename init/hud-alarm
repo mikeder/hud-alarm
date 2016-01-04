@@ -6,7 +6,7 @@
 
 DAEMON_PATH="/opt/hud-alarm"
 
-DAEMON="python daemon/server.py"
+DAEMON="python daemon/hud-alarm.py"
 DAEMONOPTS=""
 
 NAME=hud-alarm
