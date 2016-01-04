@@ -50,8 +50,8 @@ function addCountdown( $el, finalDate, alarm_id ) {
             var minutesLeft = event.strftime('%M');
             
             //checkAlarmOpen();
-            if ( daysLeft == '0' &&
-                 hoursLeft == '0' &&
+            if ( daysLeft == '00' &&
+                 hoursLeft == '00' &&
                  minutesLeft < '10' && alarmOpened == false) {
                 triggerAlarmOpen(alarm_id);
                 alarmOpened = true;
