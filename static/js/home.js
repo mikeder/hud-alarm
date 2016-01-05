@@ -27,7 +27,7 @@ window.onload = function poll() {
 
 // Accordion of upcoming events
 $(function() {
-    $( "#accordion" ).accordion({collapsible: true, active: true});
+    $( "#accordion" ).accordion({collapsible: true, active: true, heightStyle: "content"});
 });
 
 // Loop through article elements, add timers to each one
