@@ -130,7 +130,9 @@ $(function() {
         allFields.removeClass( "ui-state-error" );
         var data = { 'title': title.val(),
         'description': description.val(),
-        'datetime': datetime.val() }
+        'datetime': datetime.val(),
+        'trigger': 'None',
+        'type': 'None'}
         if ( valid ) {
             $.ajax({
                 url: '/api/alarm',
@@ -142,7 +144,7 @@ $(function() {
             },
             error: function(data) {
                 showMessage('error','Error while adding new event, try again.');
-                setTimeout(function(){location.reload(true);}, 100);
+                setTimeout(function(){location.reload(true);}, 8000);
             }
             });
             dialog.dialog( "close" );

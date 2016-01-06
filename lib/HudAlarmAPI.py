@@ -6,13 +6,16 @@ from lib import WebHandlers
 
 class Alarm(WebHandlers.BaseHandler):
     def post(self):
+        self.logger.debug('Received new alarm: %s' % self.request.body)
         data = json.loads(self.request.body)
         data['alarm_id'] = self.generator.random_string()
         data['description'] = markdown.markdown(data['description'])
-        try:
-            self.database.addAlarm(data)
-        except Exception as e:
-            print e
+        response = self.database.addAlarm(data)
+        if response['status'] == 'success':
+            self.write(response)
+        else:
+            self.logger.error(response)
+            self.write(response)
 
     def delete(self, a_alarm):
         self.logger.debug('Deleting: %s from database' % a_alarm)

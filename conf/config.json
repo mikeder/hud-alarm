@@ -2,10 +2,7 @@
   "client": {
     "title": "HUD Alert",
     "static_path": "static",
-    "template_path": "templates",
-    "check_interval": "5000",
-    "max_missed_beats": 3,
-    "documentation": ""
+    "template_path": "templates"
   },
   "database": {
     "name": "hud-alarm.db",

@@ -1,5 +1,3 @@
-import datetime
-import json
 import logging
 import tornado.web
 import tornado.ioloop
@@ -9,7 +7,7 @@ from lib import Utilities
 class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, application, request, **kwargs):
         super(BaseHandler, self).__init__(application, request)
-        self.logger = logging.getLogger('WebHandlers')
+        self.logger = logging.getLogger(__name__)
         self.generator = Utilities.Generator()
 
     def write_error(self, status_code, **kwargs):

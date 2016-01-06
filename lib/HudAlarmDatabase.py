@@ -11,12 +11,15 @@ class AlarmDatabase:
 
     ## Alarm Table Methods
     def addAlarm(self, a_alarm):
-        sql = "INSERT INTO alarm(datetime,title,description,alarm_id) VALUES('{0}','{1}','{2}','{3}')".\
-            format(a_alarm['datetime'],
-                   a_alarm['title'],
-                   a_alarm['description'],
-                   a_alarm['alarm_id'])
-        self.__updateDB(sql)
+        sql = "INSERT INTO alarm(datetime,title,description,alarm_id,trigger,type)" \
+              " VALUES('{0}','{1}','{2}','{3}','{4}','{5}')".format(a_alarm['datetime'],
+                                                                    a_alarm['title'],
+                                                                    a_alarm['description'],
+                                                                    a_alarm['alarm_id'],
+                                                                    a_alarm['trigger'],
+                                                                    a_alarm['type'])
+        response = self.__updateDB(sql)
+        return response
 
     def deleteAlarm(self, a_alarm_id):
         sql = "DELETE FROM alarm WHERE alarm_id = '{0}'".format(a_alarm_id)
@@ -135,7 +138,9 @@ class AlarmDatabase:
             datetime DATETIME,
             title TEXT,
             description TEXT,
-            alarm_id TEXT)'''
+            alarm_id TEXT,
+            trigger INTEGER,
+            type TEXT)'''
         cursor = self.database.cursor()
         cursor.execute(sql)
         self.database.commit()

@@ -56,7 +56,6 @@ class Application(tornado.web.Application):
             title=config['client']['title'],
             template_path=config['client']['template_path'],
             static_path=config['client']['static_path'],
-            documentation=config['client']['documentation'],
             debug=True,
         )
         # Define default port based on config or override via CLI
@@ -72,7 +71,7 @@ class Application(tornado.web.Application):
 
         # Provide global application properties
         # Check for active clients every check_interval
-        self.check_interval = config['client']['check_interval']
+        #self.check_interval = config['client']['check_interval']
         # Single Database connection across all handlers
         self.database = HudAlarmDatabase.AlarmDatabase(config['database'])
 
