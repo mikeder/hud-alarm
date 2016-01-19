@@ -14,6 +14,7 @@ window.onload = function poll() {
             type: 'POST',
             data: JSON.stringify(data),
             success: function(data) {
+                console.log(data)
                 hideMessage();
                 poll();  //call your function again after successfully calling the first time.
             },
@@ -94,8 +95,8 @@ function deleteAlarm( alarm_id ){
 
 // Delete Button
 $('.delete').click(function(e) {
-    var alarm_id = $(this).val();
     e.preventDefault();
+    var alarm_id = $(this).val();
     deleteAlarm( alarm_id );
 });
 
