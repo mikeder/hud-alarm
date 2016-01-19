@@ -1,8 +1,5 @@
 before_script:
-    - python -V
-    - curl https://bootstrap.pypa.io/get-pip.py 
-    - python get-pip.py
-    - pip install tornado
+    - test
     
 types:
     - build
