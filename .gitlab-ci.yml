@@ -1,5 +1,5 @@
 before_script:
-    - test
+    - test2
     
 types:
     - build
