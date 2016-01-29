@@ -9,6 +9,7 @@ class BaseHandler(tornado.web.RequestHandler):
         super(BaseHandler, self).__init__(application, request)
         self.logger = logging.getLogger(__name__)
         self.generator = Utilities.Generator()
+        self.sanitizer = Utilities.StringUtil()
 
     def write_error(self, status_code, **kwargs):
         self.render("error.html", error=status_code)

@@ -2,13 +2,16 @@ import json
 import datetime
 import markdown
 from lib import WebHandlers
+from lib import Utilities
 
 class Alarm(WebHandlers.BaseHandler):
     def post(self):
         self.logger.debug('Received new alarm: %s' % self.request.body)
         data = json.loads(self.request.body)
-        data['alarm_id'] = self.generator.random_string()
+        data['title'] = self.sanitizer.sanitize(data['title'])
+        data['description'] = self.sanitizer.sanitize(data['description'])
         data['description'] = markdown.markdown(data['description'])
+        data['alarm_id'] = self.generator.random_string()
         response = self.database.addAlarm(data)
         if response['status'] == 'success':
             self.write(response)

@@ -38,3 +38,11 @@ class Generator():
                         self.SECRET_KEY)).encode('utf-8')
                 ).digest())
         return ''.join(self.random.choice(allowed_chars) for i in range(length))
+
+class StringUtil():
+    def sanitize(self, a_string):
+        escape_these = ['\'']
+        for char in escape_these:
+            if char in a_string:
+                a_string = a_string.replace(char, '\''+char)
+        return a_string

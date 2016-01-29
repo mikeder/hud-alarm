@@ -144,7 +144,8 @@ $(function() {
                 setTimeout(function(){location.reload(true);}, 100);
             },
             error: function(data) {
-                showMessage('error','Error while adding new event, try again.');
+                //alert(JSON.parse(data.responseText)['message'])
+                showMessage('error',data.responseText);
                 setTimeout(function(){location.reload(true);}, 8000);
             }
             });
