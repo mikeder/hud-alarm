@@ -2,7 +2,6 @@ import os
 import sys
 cwd = os.getcwd()
 sys.path.append(cwd)
-
 import getopt
 import json
 from lib import HudAlarmAPI
