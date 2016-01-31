@@ -36,11 +36,12 @@ $('article').each(function( index ) {
     var $el = $('#countdown' + index),
         finalDate = $(this).data('countdown'),
         alarm_id = $(this).data('alarmid');
-        addCountdown( $el, finalDate, alarm_id );
+        open_at = $(this).data('open')
+        addCountdown( $el, finalDate, alarm_id, open_at );
 });
 
 // Add countdown timer to Element
-function addCountdown( $el, finalDate, alarm_id ) {
+function addCountdown( $el, finalDate, alarm_id, open_at ) {
     var alarmOpened = false;
     $el.countdown(finalDate, function(event) {
         $el.html(event.strftime('%D days %H:%M:%S'));
@@ -53,7 +54,7 @@ function addCountdown( $el, finalDate, alarm_id ) {
             //checkAlarmOpen();
             if ( daysLeft == '00' &&
                  hoursLeft == '00' &&
-                 minutesLeft < '10' && alarmOpened == false) {
+                 minutesLeft < open_at && alarmOpened == false) {
                 triggerAlarmOpen(alarm_id);
                 alarmOpened = true;
             }
@@ -116,31 +117,26 @@ function hideMessage(){
 //Begin JQuery UI Modal Dialog
 $(function() {
     var dialog, form,
-        title = $( "#title" ),
-        description = $( "#description" ),
         datetime = $( "#datetime" ).datetimepicker({
             dateFormat: 'mm-dd-yy',
             timeFormat: 'HH:mm',
             minDate: '0'
-        }),
-        allFields = $( [] ).add( title ).add( description ).add( datetime ),
-        tips = $( ".validateTips" );
+        });
 
     function addEvent() {
         var valid = true;
-        allFields.removeClass( "ui-state-error" );
-        var data = { 'title': title.val(),
-        'description': description.val(),
-        'datetime': datetime.val(),
-        'trigger': 'None',
-        'type': 'None'}
+        var data = { 'title': $( "#title" ).val(),
+        'description': $( "#description" ).val(),
+        'endtime': datetime.val(),
+        'open': $( "#open" ).val(),
+        'close': 'None'}
         if ( valid ) {
             $.ajax({
                 url: '/api/alarm',
                 type: 'POST',
                 data: JSON.stringify(data),
             success: function(data) {
-                showMessage('','Successfully added new event!');
+                showMessage('',data.responseText);
                 setTimeout(function(){location.reload(true);}, 100);
             },
             error: function(data) {
@@ -167,7 +163,6 @@ $(function() {
         },
         close: function() {
             form[ 0 ].reset();
-            allFields.removeClass( "ui-state-error" );
         }
     });
 

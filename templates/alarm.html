@@ -27,9 +27,9 @@
   </head>
   <body>
       <div style="text-align:center;">
-        <h1>{{ alarm['title'] }} - {{ alarm['datetime'] }}</h1>
+        <h1>{{ alarm['title'] }} - {{ alarm['endtime'] }}</h1>
         <p>
-            <h2><b>Time Remaining:</b></h2><h1 data-countdown="{{ alarm['datetime'] }}"></h1><br>
+            <h2><b>Time Remaining:</b></h2><h1 data-countdown="{{ alarm['endtime'] }}"></h1><br>
             <h1><b>Perform the following:</b><br></h1>
             <h1>{% raw alarm['description'] %}<br></h1>
             <button style="top:50%;" id="close" class="btn btn-success">Close</button>

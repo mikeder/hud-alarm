@@ -12,6 +12,15 @@
           <input type="text" name="title" id="title" placeholder="Title" class="text ui-widget-content ui-corner-all"><br><hr>
           <textarea name="description" id="description" placeholder="Description"
                     class="text ui-widget-content ui-corner-all" rows="10" cols="50"></textarea><br>
+          Show alarm
+          <select id="open">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+          </select>
+          minutes before end time.<br>
           <!-- Allow form submission with keyboard without duplicating the dialog button -->
           <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
         </fieldset>
@@ -21,11 +30,12 @@
     <h3>Upcoming Events:</h3>
     <div id="accordion">
       {% for idx, alarm in enumerate(alarms) %}
-      <h3>{{ alarm['title'] }} - {{ alarm['datetime'] }}</h3>
+      <h3>{{ alarm['title'] }} - {{ alarm['endtime'] }}</h3>
         <article data-id="event{{ idx }}"
-                 data-countdown="{{ alarm['datetime'] }}"
+                 data-countdown="{{ alarm['endtime'] }}"
                  data-alarmid="{{ alarm['alarm_id'] }}"
-                 data-title="{{ alarm['title'] }}">
+                 data-title="{{ alarm['title'] }}"
+                 data-open="{{ alarm['open'] }}">
 
             <b>Time Remaining:</b><h4  id="countdown{{ idx }}"></h4>
             <b>Perform the following:</b><br>

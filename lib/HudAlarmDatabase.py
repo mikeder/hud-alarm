@@ -11,13 +11,13 @@ class AlarmDatabase:
 
     ## Alarm Table Methods
     def addAlarm(self, a_alarm):
-        sql = "INSERT INTO alarm(datetime,title,description,alarm_id,trigger,type)" \
-              " VALUES('{0}','{1}','{2}','{3}','{4}','{5}')".format(a_alarm['datetime'],
+        sql = "INSERT INTO alarm(endtime,title,description,alarm_id,open,close)" \
+              " VALUES('{0}','{1}','{2}','{3}','{4}','{5}')".format(a_alarm['endtime'],
                                                                     a_alarm['title'],
                                                                     a_alarm['description'],
                                                                     a_alarm['alarm_id'],
-                                                                    a_alarm['trigger'],
-                                                                    a_alarm['type'])
+                                                                    a_alarm['open'],
+                                                                    a_alarm['close'])
         response = self.__updateDB(sql)
         return response
 
@@ -30,7 +30,7 @@ class AlarmDatabase:
         if a_alarm_id:
             sql = "SELECT * FROM alarm where alarm_id = '{0}'".format(a_alarm_id)
         else:
-            sql = "SELECT * FROM alarm ORDER BY datetime ASC"
+            sql = "SELECT * FROM alarm ORDER BY endtime ASC"
         return self.__queryDB(sql)
 
 
@@ -135,12 +135,12 @@ class AlarmDatabase:
         sql = '''
             CREATE TABLE IF NOT EXISTS
             alarm(id INTEGER PRIMARY KEY,
-            datetime DATETIME,
+            endtime DATETIME,
             title TEXT,
             description TEXT,
             alarm_id TEXT,
-            trigger INTEGER,
-            type TEXT)'''
+            open INTEGER,
+            close INTEGER)'''
         cursor = self.database.cursor()
         cursor.execute(sql)
         self.database.commit()

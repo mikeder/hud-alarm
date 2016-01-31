@@ -14,9 +14,7 @@ class Generator():
                           'on your system. Falling back to Mersenne Twister.')
             self.using_sysrandom = False
 
-    def random_string(self, length=12,
-                          allowed_chars='abcdefghijklmnopqrstuvwxyz'
-                                        'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'):
+    def random_string(self, length=12, allowed_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'):
         """
         Returns a securely generated random string.
 
