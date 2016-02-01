@@ -36,20 +36,18 @@ class AlarmDatabase:
 
     ## Client Table Methods
     def addClient(self, a_client):
-        sql = "INSERT INTO client(startTime, endTime, clientID, hasFocus, url) VALUES('{0}','{1}','{2}','{3}','{4}')".\
-            format(a_client['startTime'],
-                   a_client['endTime'],
-                   a_client['clientID'],
-                   a_client['hasFocus'],
-                   a_client['url'])
+        sql = "INSERT INTO client(startTime, endTime, client_id, client_ip, hasFocus, url)\
+               VALUES('{0}','{1}','{2}','{3}','{4}','{5}')".format(a_client['startTime'],
+                                                                   a_client['endTime'],
+                                                                   a_client['client_id'],
+                                                                   a_client['client_ip'],
+                                                                   a_client['hasFocus'],
+                                                                   a_client['url'])
         self.__updateDB(sql)
 
-    def getClients(self, a_client=None, a_url=None):
+    def getClients(self, a_client=None):
         if a_client:
-            if a_url:
-                sql = "SELECT * FROM client where clientID = '{0}' AND url = '{1}'".format(a_client, a_url)
-            else:
-                sql = "SELECT * FROM client where clientID = '{0}'".format(a_client)
+            sql = "SELECT * FROM client where client_id = '{0}'".format(a_client)
         else:
             sql = "SELECT * FROM client"
         return self.__queryDB(sql)
@@ -58,7 +56,8 @@ class AlarmDatabase:
         sql = "UPDATE client SET endTime = '{0}', hasFocus = '{1}' WHERE clientID = '{2}' AND url = '{3}'".\
             format(a_client['endTime'],
                    a_client['hasFocus'],
-                   a_client['clientID'],
+                   a_client['client_id'],
+                   a_client['client_ip'],
                    a_client['url'])
         self.__updateDB(sql)
 
