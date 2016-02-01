@@ -1,11 +1,30 @@
+// Initial setup of UI Accordion
+$('#accordion').accordion({collapsible: true, active: false, heightStyle: "content"});
+
 // Check focus of page
 var hasFocus = '1';
 var url = window.location.href;
 window.onblur = function () {hasFocus = '0';}
 window.onfocus = function () {hasFocus = '1';}
 
+window.onload = function(){
+    getAlarms();
+    getCounters();
+    startListeners();
+    startHeartbeat();
+}
+
+function getAlarms(){
+    $.getJSON('/api/alarm', function(data){
+        $.each( data.alarms, function(index, alarm) {
+            updateAccordion(alarm);
+        });
+        $('#accordion').accordion('refresh');
+    });
+}
+
 // Start heartbeat
-window.onload = function poll() {
+function startHeartbeat() {
     setTimeout( function() {
         var data = { 'hasFocus': hasFocus,
                      'url': url }
@@ -26,21 +45,42 @@ window.onload = function poll() {
     }, 5000);
 };
 
-// Accordion of upcoming events
-$(function() {
-    $( "#accordion" ).accordion({collapsible: true, active: true, heightStyle: "content"});
-});
+function startListeners(){
+    // Delete Button listener
+    $('.delete').click(function(e) {
+        e.preventDefault();
+        var alarm_id = $(this).val();
+        console.log(alarm_id)
+        deleteAlarm( alarm_id );
+    });
+}
+
+// Add an alarm to the accordion
+function updateAccordion( alarm ){
+    var counter = "<p id='"+alarm.alarm_id+"'></p>";
+    var head = "<h3>"+alarm.title+" - "+alarm.endtime+"</h3>";
+    var body = "<article data-endtime='"+alarm.endtime+"'data-alarmid='"+alarm.alarm_id+"' data-open='"+alarm.open+"'>"+
+                "<b>Perform the following: </b>"+
+                alarm.description+
+                "<b>Time Remaining: </b>"+
+                counter+"<hr>"+
+                "<button class='delete btn btn-danger' style='float: right;' value='"+alarm.alarm_id+"'>Delete</button>"+
+                "</article>";
+    $('#accordion').append(head+body);
+};
 
 // Loop through article elements, add timers to each one
-$('article').each(function( index ) {
-    var $el = $('#countdown' + index),
-        finalDate = $(this).data('countdown'),
-        alarm_id = $(this).data('alarmid');
-        open_at = $(this).data('open')
-        addCountdown( $el, finalDate, alarm_id, open_at );
-});
+function getCounters(){
+    $('article').each(function() {
+        var finalDate = $(this).data('endtime');
+        var alarm_id = $(this).data('alarmid');
+        var open_at = $(this).data('open');
+        var $el = $('#'+ alarm_id);
+        addCountdown( $el, finalDate, alarm_id, open_at )
+    });
+};
 
-// Add countdown timer to Element
+// Add countdown timer to element
 function addCountdown( $el, finalDate, alarm_id, open_at ) {
     var alarmOpened = false;
     $el.countdown(finalDate, function(event) {
@@ -50,7 +90,7 @@ function addCountdown( $el, finalDate, alarm_id, open_at ) {
             var daysLeft = event.strftime('%D');
             var hoursLeft = event.strftime('%H');
             var minutesLeft = event.strftime('%M');
-            
+
             //checkAlarmOpen();
             if ( daysLeft == '00' &&
                  hoursLeft == '00' &&
@@ -62,17 +102,7 @@ function addCountdown( $el, finalDate, alarm_id, open_at ) {
         .on('finish.countdown', function(event) {
             deleteAlarm( alarm_id );
         });
-}
-
-// Check if alarm window is already open
-function checkAlarmOpen( alarm_id ) {
-    $.getJSON( '/api/heartbeat')
-        .done(function( data ) {
-            $.each( data.items, function( item ) {
-                console.log(item.url)
-            })
-        })
-}
+};
 
 // Open /alarm endpoint for given ID
 function triggerAlarmOpen( alarm_id ) {
@@ -85,21 +115,15 @@ function deleteAlarm( alarm_id ){
         url: '/api/alarm/' + alarm_id,
         type: 'DELETE',
         success: function(data) {
-            location.reload(true);
+            showMessage('',data.message);
+            setTimeout(function(){location.reload(true);}, 100);
         },
         error: function(data) {
-            alert(JSON.parse(data.responseText)['message']);
-            setTimeout(function(){location.reload(true);}, 10);
+            showMessage('error',data.message);
+            setTimeout(function(){location.reload(true);}, 8000);
         }
     });
 }
-
-// Delete Button
-$('.delete').click(function(e) {
-    e.preventDefault();
-    var alarm_id = $(this).val();
-    deleteAlarm( alarm_id );
-});
 
 // Display Banner Message
 function showMessage( type, msg ){
@@ -136,12 +160,11 @@ $(function() {
                 type: 'POST',
                 data: JSON.stringify(data),
             success: function(data) {
-                showMessage('',data.responseText);
+                showMessage('',data.message);
                 setTimeout(function(){location.reload(true);}, 100);
             },
             error: function(data) {
-                //alert(JSON.parse(data.responseText)['message'])
-                showMessage('error',data.responseText);
+                showMessage('error',data.message);
                 setTimeout(function(){location.reload(true);}, 8000);
             }
             });

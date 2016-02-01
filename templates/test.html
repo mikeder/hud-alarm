@@ -1,13 +1,34 @@
 {% extends "base.html" %}
 
 {% block body %}
-<script src="{{ static_url('js/jquery.countdown.js') }}"></script>
+<link href="{{ static_url('css/jquery.datetimepicker.css') }}" rel="stylesheet">
+<div id="dialog-form" title="Add New Event">
+  <p class="validateTips">All form fields are required.</p>
+  <form>
+    <fieldset>
+      <input type="datetime" name="datetime" id="datetime" placeholder="Date & Time" class="text ui-widget-content ui-corner-all"><br><br>
+      <input type="text" name="title" id="title" placeholder="Title" class="text ui-widget-content ui-corner-all"><br><hr>
+      <textarea name="description" id="description" placeholder="Description"
+                class="text ui-widget-content ui-corner-all" rows="10" cols="50"></textarea><br>
+      Show alarm
+      <select id="open">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+      </select>
+      minutes before end time.<br>
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+</div>
 
-<span id="clock"></span>
 
-<audio src="{{ static_url('wav/evac.mp3') }}" preload="auto" id="sound1"></audio>
-
+<div id="banner" class="ui-widget"></div><br>
+<div id="accordion"></div><br>
+<button id="addEvent" class="btn btn-success">Add New</button>
 <script src="{{ static_url('js/test.js') }}"></script>
-
 
 {% end %}

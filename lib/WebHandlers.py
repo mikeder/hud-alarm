@@ -9,7 +9,7 @@ class BaseHandler(tornado.web.RequestHandler):
         super(BaseHandler, self).__init__(application, request)
         self.logger = logging.getLogger(__name__)
         self.generator = Utilities.Generator()
-        self.sanitizer = Utilities.StringUtil()
+        self.stringutil = Utilities.StringUtil()
 
     def write_error(self, status_code, **kwargs):
         self.render("error.html", error=status_code)
@@ -30,10 +30,7 @@ class Alarm(tornado.web.RequestHandler):
 
 class Home(BaseHandler):
     def get(self):
-        alarms = self.database.getAlarms()
-        if alarms is None:
-            alarms = ''
-        self.render('home.html', alarms=alarms, count=len(alarms))
+        self.render('home.html')
 
 class Test(BaseHandler):
     def get(self):

@@ -1,4 +1,4 @@
-import datetime
+import json
 import logging
 import sqlite3
 
@@ -84,7 +84,7 @@ class AlarmDatabase:
 
     def __queryDB(self, sql):
         self.database.text_factory = str
-        self.database.row_factory = sqlite3.Row # This enables column access by name: row['column_name']
+        self.database.row_factory = self.dict_factory
         try:
             cursor = self.database.cursor()
             self.logger.debug(sql)
@@ -101,10 +101,16 @@ class AlarmDatabase:
             self.logger.error('\033[1;91m%s\033[1;m' % (err, ))
             return None
 
+    def dict_factory(self, cursor, row):
+        d = {}
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+        return d
+
     ## Versioning methods
     def __checkVersion(self):
         sql = 'PRAGMA user_version'
-        database_version = self.__queryDB(sql)[0][0]
+        database_version = self.__queryDB(sql)[0]['user_version']
         self.logger.debug('Database is currently version %s' % database_version)
         return database_version
 

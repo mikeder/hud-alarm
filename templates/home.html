@@ -1,54 +1,36 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <link href="{{ static_url('css/jquery.datetimepicker.css') }}" rel="stylesheet">
-    <div id="banner" class="ui-widget"></div>
+<link href="{{ static_url('css/jquery.datetimepicker.css') }}" rel="stylesheet">
+<div id="dialog-form" title="Add New Event">
+  <p class="validateTips">All form fields are required.</p>
+  <form>
+    <fieldset>
+      <input type="datetime" name="datetime" id="datetime" placeholder="Date & Time" class="text ui-widget-content ui-corner-all"><br><br>
+      <input type="text" name="title" id="title" placeholder="Title" class="text ui-widget-content ui-corner-all"><br><hr>
+      <textarea name="description" id="description" placeholder="Description"
+                class="text ui-widget-content ui-corner-all" rows="10" cols="50"></textarea><br>
+      Show alarm
+      <select id="open">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+      </select>
+      minutes before end time.<br>
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    </fieldset>
+  </form>
+</div>
 
-    <div id="dialog-form" title="Add New Event">
-      <p class="validateTips">All form fields are required.</p>
-      <form>
-        <fieldset>
-          <input type="datetime" name="datetime" id="datetime" placeholder="Date & Time" class="text ui-widget-content ui-corner-all"><br><br>
-          <input type="text" name="title" id="title" placeholder="Title" class="text ui-widget-content ui-corner-all"><br><hr>
-          <textarea name="description" id="description" placeholder="Description"
-                    class="text ui-widget-content ui-corner-all" rows="10" cols="50"></textarea><br>
-          Show alarm
-          <select id="open">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-          </select>
-          minutes before end time.<br>
-          <!-- Allow form submission with keyboard without duplicating the dialog button -->
-          <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-        </fieldset>
-      </form>
-    </div>
 
-    <h3>Upcoming Events:</h3>
-    <div id="accordion">
-      {% for idx, alarm in enumerate(alarms) %}
-      <h3>{{ alarm['title'] }} - {{ alarm['endtime'] }}</h3>
-        <article data-id="event{{ idx }}"
-                 data-countdown="{{ alarm['endtime'] }}"
-                 data-alarmid="{{ alarm['alarm_id'] }}"
-                 data-title="{{ alarm['title'] }}"
-                 data-open="{{ alarm['open'] }}">
+<div id="banner" class="ui-widget"></div><br>
+<div id="accordion"></div><br>
+<button id="addEvent" class="btn btn-success">Add New</button>
+<script src="{{ static_url('js/test.js') }}"></script>
 
-            <b>Time Remaining:</b><h4  id="countdown{{ idx }}"></h4>
-            <b>Perform the following:</b><br>
-            {% raw alarm['description'] %}
-            <a href="#"
-               style="float:right"
-               onclick="window.open('/alarm/{{ alarm['alarm_id'] }}','targetWindow','scrollbars=yes,resizable=yes,width=500,height=480')">
-                Alarm ID: {{ alarm['alarm_id'] }}</a><br><br><hr>
-            <button class="btn btn-danger delete" style="float: right;" value="{{ alarm['alarm_id'] }}">Delete</button>
-        </article>
-    {% end %}
-    </div>
-    <br>
-    <button id="addEvent" class="btn btn-success">Add New</button>
-    <script src="{{ static_url('js/home.js') }}"></script>
 {% end %}

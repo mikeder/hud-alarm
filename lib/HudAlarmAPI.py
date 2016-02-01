@@ -2,35 +2,38 @@ import json
 import datetime
 import markdown
 from lib import WebHandlers
-from lib import Utilities
 
 class Alarm(WebHandlers.BaseHandler):
+    def get(self):
+        alarms = self.database.getAlarms()
+        self.finish({'alarms':alarms})
+
     def post(self):
         self.logger.debug('Received new alarm: %s' % self.request.body)
         data = json.loads(self.request.body)
-        data['title'] = self.sanitizer.sanitize(data['title'])
-        data['description'] = self.sanitizer.sanitize(data['description'])
+        data['title'] = self.stringutil.sanitize(data['title'])
+        data['description'] = self.stringutil.sanitize(data['description'])
         data['description'] = markdown.markdown(data['description'])
         data['alarm_id'] = self.generator.random_string()
         response = self.database.addAlarm(data)
         if response['status'] == 'success':
-            self.write(response)
+            self.finish(response)
         else:
             self.logger.error(response)
-            self.write(response)
+            self.finish(response)
 
     def delete(self, a_alarm):
         self.logger.debug('Deleting: %s from database' % a_alarm)
-        self.database.deleteAlarm(a_alarm)
-        self.set_status(200,'success')
+        response = self.database.deleteAlarm(a_alarm)
+        self.finish(response)
 
 class Heartbeat(WebHandlers.BaseHandler):
     def get(self):
         clients = self.database.getClients()
         if clients:
-            self.write(json.dumps( [dict(rec) for rec in clients] )) # Convert row object to JSON string
+            self.finish({'clients':clients})
         else:
-            self.write('None')
+            self.finish('None')
 
     def post(self):
         x_real_ip = self.request.headers.get("X-Real-IP")
