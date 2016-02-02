@@ -7,30 +7,39 @@ var url = window.location.href;
 window.onblur = function () {hasFocus = '0';}
 window.onfocus = function () {hasFocus = '1';}
 
-window.onload = function(){
-    var alarms = [];
-    alarms = getAlarms();
-    if (alarms.length != null) {
-        console.log('There are alarms')
-        alarms.each(updateAccordion(this));
-        $('#accordion').accordion('refresh');
-        getCounters();
-    } else {
-        console.log('There are NO alarms')
+function addLoadEvent(func) {
+  var oldonload = window.onload;
+  if (typeof window.onload != 'function') {
+    window.onload = func;
+  } else {
+    window.onload = function() {
+      if (oldonload) {
+        oldonload();
+      }
+      func();
     }
-    startListeners();
-    poll();
+  }
 }
 
+addLoadEvent(getAlarms);
+addLoadEvent(poll);
+
+
 function getAlarms(){
+    console.log('getAlarms()')
     $.getJSON('/api/alarm', function(data){
-        console.log(data.alarms)
-        return data.alarms;
+        var alarms = data.alarms;
+        if (alarms.length > 0) {
+            alarms.forEach(updateAccordion);
+        } else {
+            console.log('There are NO alarms')
+        }
     })
 }
 
 // Start heartbeat
 function poll() {
+    console.log('poll()')
     setTimeout( function() {
         var uuid = document.cookie;
         var data = { 'focus': hasFocus,
@@ -52,20 +61,22 @@ function poll() {
             }
         });
     }, 5000);
-};
+}
 
 function startListeners(){
+    console.log('startListeners()')
     // Delete Button listener
     $('.delete').click(function(e) {
-        e.preventDefault();
+        e.preventDefault()
         var alarm_id = $(this).val();
         console.log(alarm_id)
-        deleteAlarm( alarm_id );
-    });
+        deleteAlarm( alarm_id )
+    })
 }
 
 // Add an alarm to the accordion
 function updateAccordion( alarm ){
+    console.log('updateAccordion()')
     var counter = "<p id='"+alarm.alarm_id+"'></p>";
     var head = "<h3>"+alarm.title+" - "+alarm.endtime+"</h3>";
     var body = "<article data-endtime='"+alarm.endtime+"'data-alarmid='"+alarm.alarm_id+"' data-open='"+alarm.open+"'>"+
@@ -75,22 +86,28 @@ function updateAccordion( alarm ){
                 counter+"<hr>"+
                 "<button class='delete btn btn-danger' style='float: right;' value='"+alarm.alarm_id+"'>Delete</button>"+
                 "</article>";
-    $('#accordion').append(head+body);
-};
+    $('#accordion').append(head+body)
+    $('#accordion').accordion('refresh')
+    getCounters();
+}
 
 // Loop through article elements, add timers to each one
 function getCounters(){
+    console.log('getCounters()')
     $('article').each(function() {
         var finalDate = $(this).data('endtime');
         var alarm_id = $(this).data('alarmid');
         var open_at = $(this).data('open');
         var $el = $('#'+ alarm_id);
+        console.log(alarm_id)
         addCountdown( $el, finalDate, alarm_id, open_at )
-    });
-};
+    })
+    startListeners();
+}
 
 // Add countdown timer to element
 function addCountdown( $el, finalDate, alarm_id, open_at ) {
+    console.log('addCountdown()')
     var alarmOpened = false;
     $el.countdown(finalDate, function(event) {
         $el.html(event.strftime('%D days %H:%M:%S'));
@@ -110,16 +127,18 @@ function addCountdown( $el, finalDate, alarm_id, open_at ) {
         })
         .on('finish.countdown', function(event) {
             deleteAlarm( alarm_id );
-        });
-};
+        })
+}
 
 // Open /alarm endpoint for given ID
 function triggerAlarmOpen( alarm_id ) {
+    console.log('triggerAlarmOpen()' + alarm_id)
     window.open('/alarm/' + alarm_id);
 }
 
 // Delete Alarm
 function deleteAlarm( alarm_id ){
+    console.log('deleteAlarm()' + alarm_id)
     $.ajax({
         url: '/api/alarm/' + alarm_id,
         type: 'DELETE',
@@ -131,7 +150,7 @@ function deleteAlarm( alarm_id ){
             showMessage('error',data.message);
             setTimeout(function(){location.reload(true);}, 8000);
         }
-    });
+    })
 }
 
 // Display Banner Message
@@ -196,14 +215,14 @@ $(function() {
         close: function() {
             form[ 0 ].reset();
         }
-    });
+    })
 
     form = dialog.find( "form" ).on( "submit", function( event ) {
         event.preventDefault();
         addEvent();
-    });
+    })
 
     $( "#addEvent" ).button().on( "click", function() {
         dialog.dialog( "open" );
-    });
-});
+    })
+})
