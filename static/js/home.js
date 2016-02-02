@@ -78,15 +78,19 @@ function startListeners(){
 function updateAccordion( alarm ){
     console.log('updateAccordion()')
     var counter = "<p id='"+alarm.alarm_id+"'></p>";
-    var head = "<h3>"+alarm.title+" - "+alarm.endtime+"</h3>";
-    var body = "<article data-endtime='"+alarm.endtime+"'data-alarmid='"+alarm.alarm_id+"' data-open='"+alarm.open+"'>"+
-                "<b>Perform the following: </b>"+
-                alarm.description+
-                "<b>Time Remaining: </b>"+
-                counter+"<hr>"+
-                "<button class='delete btn btn-danger' style='float: right;' value='"+alarm.alarm_id+"'>Delete</button>"+
-                "</article>";
-    $('#accordion').append(head+body)
+    var header = "<h3>"+alarm.title+" - "+alarm.endtime+"</h3>";
+    var open = "<article data-endtime='"+alarm.endtime+"'data-alarmid='"+alarm.alarm_id+"' data-open='"+alarm.open+"'>";
+    if(alarm.description.length > 1){
+        console.log('updateAccorion(): w/ description')
+        var desc = "<b>Perform the following: </b>"+alarm.description;
+    }else{
+        console.log('updateAccordion(): no description')
+        var desc = '';
+    }
+    var countdown = "<b>Time Remaining: </b>"+counter+"<hr>";
+    var button = "<button class='delete btn btn-danger' style='float: right;' value='"+alarm.alarm_id+"'>Delete</button>"
+    var close = "</article>";
+    $('#accordion').append(header+open+desc+countdown+button+close)
     $('#accordion').accordion('refresh')
     getCounters();
 }
@@ -99,7 +103,6 @@ function getCounters(){
         var alarm_id = $(this).data('alarmid');
         var open_at = $(this).data('open');
         var $el = $('#'+ alarm_id);
-        console.log(alarm_id)
         addCountdown( $el, finalDate, alarm_id, open_at )
     })
     startListeners();
