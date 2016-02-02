@@ -36,30 +36,39 @@ class AlarmDatabase:
 
     ## Client Table Methods
     def addClient(self, a_client):
-        sql = "INSERT INTO client(startTime, endTime, client_id, client_ip, hasFocus, url)\
-               VALUES('{0}','{1}','{2}','{3}','{4}','{5}')".format(a_client['startTime'],
-                                                                   a_client['endTime'],
-                                                                   a_client['client_id'],
-                                                                   a_client['client_ip'],
-                                                                   a_client['hasFocus'],
+        sql = "INSERT INTO client(start, end, uuid, address, focus, url)\
+               VALUES('{0}','{1}','{2}','{3}','{4}','{5}')".format(a_client['start'],
+                                                                   a_client['end'],
+                                                                   a_client['uuid'],
+                                                                   a_client['address'],
+                                                                   a_client['focus'],
                                                                    a_client['url'])
-        self.__updateDB(sql)
+        response = self.__updateDB(sql)
+        if response['status'] == 'ok':
+            response['client'] = a_client['uuid']
+        elif response['status'] == 'error':
+            pass
+        return response
 
     def getClients(self, a_client=None):
         if a_client:
-            sql = "SELECT * FROM client where client_id = '{0}'".format(a_client)
+            sql = "SELECT * FROM client where uuid = '{0}'".format(a_client)
         else:
             sql = "SELECT * FROM client"
         return self.__queryDB(sql)
 
     def updateClient(self, a_client):
-        sql = "UPDATE client SET endTime = '{0}', hasFocus = '{1}' WHERE clientID = '{2}' AND url = '{3}'".\
-            format(a_client['endTime'],
-                   a_client['hasFocus'],
-                   a_client['client_id'],
-                   a_client['client_ip'],
-                   a_client['url'])
-        self.__updateDB(sql)
+        sql = "UPDATE client SET end = '{0}', focus = '{1}' WHERE uuid = '{2}'".\
+            format(a_client['end'],
+                   a_client['focus'],
+                   a_client['uuid'],
+                   a_client['address'])
+        response = self.__updateDB(sql)
+        if response['status'] == 'ok':
+            response['client'] = a_client['uuid']
+        elif response['status'] == 'error':
+            pass
+        return response
 
 
     ## Internal Class Methods
@@ -154,10 +163,11 @@ class AlarmDatabase:
         sql = '''
             CREATE TABLE IF NOT EXISTS
             client(id INTEGER PRIMARY KEY,
-            startTime TIMESTAMP,
-            endTime TIMESTAMP,
-            clientID TEXT,
-            hasFocus INTEGER,
+            start TIMESTAMP,
+            end TIMESTAMP,
+            uuid TEXT,
+            address TEXT,
+            focus INTEGER,
             url TEXT)'''
         cursor = self.database.cursor()
         cursor.execute(sql)

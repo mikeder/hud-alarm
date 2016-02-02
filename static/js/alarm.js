@@ -34,6 +34,7 @@ $('[data-countdown]').each(function() {
    })
      .on('finish.countdown', function(event) {
         PlaySound("sound1");
+        setTimeout(window.close(), 10000);
      });
 });
 

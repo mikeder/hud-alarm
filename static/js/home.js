@@ -8,26 +8,34 @@ window.onblur = function () {hasFocus = '0';}
 window.onfocus = function () {hasFocus = '1';}
 
 window.onload = function(){
-    getAlarms();
-    getCounters();
+    var alarms = [];
+    alarms = getAlarms();
+    if (alarms.length != null) {
+        console.log('There are alarms')
+        alarms.each(updateAccordion(this));
+        $('#accordion').accordion('refresh');
+        getCounters();
+    } else {
+        console.log('There are NO alarms')
+    }
     startListeners();
-    startHeartbeat();
+    poll();
 }
 
 function getAlarms(){
     $.getJSON('/api/alarm', function(data){
-        $.each( data.alarms, function(index, alarm) {
-            updateAccordion(alarm);
-        });
-        $('#accordion').accordion('refresh');
-    });
+        console.log(data.alarms)
+        return data.alarms;
+    })
 }
 
 // Start heartbeat
-function startHeartbeat() {
+function poll() {
     setTimeout( function() {
-        var data = { 'hasFocus': hasFocus,
-                     'url': url }
+        var uuid = document.cookie;
+        var data = { 'focus': hasFocus,
+                     'url': url,
+                     'uuid': uuid };
         $.ajax({
             url: '/api/heartbeat',
             type: 'POST',
@@ -35,6 +43,7 @@ function startHeartbeat() {
             success: function(data) {
                 console.log(data)
                 hideMessage();
+                document.cookie = data.client;
                 poll();  //call your function again after successfully calling the first time.
             },
             error: function(data) {

@@ -37,23 +37,24 @@ class Heartbeat(WebHandlers.BaseHandler):
             self.finish('None')
 
     def post(self):
-        x_real_ip = self.request.headers.get("X-Real-IP")
-        remote_ip = x_real_ip or self.request.remote_ip
+        # Full client columns:
+        # start, end, uuid, address, focus, url
+        # ajax will include: uuid(sometimes), focus, url
         data = json.loads(self.request.body)
-        existingClient = self.database.getClients(remote_ip,data['url'])
+        x_real_ip = self.request.headers.get("X-Real-IP")
+        data['address'] = x_real_ip or self.request.remote_ip
         now = datetime.datetime.now()
-        end = now + datetime.timedelta(minutes=1)
-        client = {
-            'startTime': now,
-            'endTime': end,
-            'clientID': remote_ip,
-            'hasFocus': data['hasFocus'],
-            'url': data['url']
-        }
-        if existingClient is None:
-            self.database.addClient(client)
-            self.set_status(201,"Client added")
+        data['start'] = now
+        data['end'] = now + datetime.timedelta(minutes=1)
+        self.logger.debug(data['uuid'])
+        if data['uuid'] != '' or data['uuid']:
+            response = self.database.updateClient(data)
+            self.logger.debug(response)
+            self.set_status(200,'Client updated')
+            self.finish(response)
         else:
-            self.database.updateClient(client)
-            self.set_status(200,"Client updated")
-        self.logger.debug('Client %s, Focus %s' % (remote_ip,data['hasFocus']))
+            data['uuid'] = str(uuid.uuid4())
+            response = self.database.addClient(data)
+            self.logger.debug(response)
+            self.set_status(201,'Client Added')
+            self.finish(response)
