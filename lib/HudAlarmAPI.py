@@ -16,7 +16,6 @@ class Alarm(WebHandlers.BaseHandler):
         data['description'] = self.stringutil.sanitize(data['description'])
         data['description'] = markdown.markdown(data['description'])
         data['alarm_id'] = self.generator.random_string()
-        print data
         response = self.database.addAlarm(data)
         if response['status'] == 'ok':
             # Set all client updateDue bits except for the one that is calling
@@ -57,10 +56,8 @@ class Heartbeat(WebHandlers.BaseHandler):
             response = self.database.updateClient(data)
             if update['refresh'] == 0 or update['refresh'] == '0':
                 response['refresh'] = 0
-                print response
             elif update['refresh'] == 1 or update['refresh'] == '1':
                 response['refresh'] = 1
-                print response
             self.logger.debug(response)
             self.set_status(200,'Client updated')
             self.finish(response)

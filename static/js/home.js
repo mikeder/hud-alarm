@@ -192,7 +192,7 @@ $(function() {
         'endtime': datetime.val(),
         'open': $( "#open" ).val(),
         'close': 'None',
-        'client': uuid}
+        'uuid': uuid}
         if ( valid ) {
             $.ajax({
                 url: '/api/alarm',
