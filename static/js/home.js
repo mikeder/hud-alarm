@@ -31,6 +31,7 @@ function getAlarms(){
         var alarms = data.alarms;
         if (alarms.length > 0) {
             alarms.forEach(updateAccordion);
+            getCounters();
         } else {
             console.log('There are NO alarms')
         }
@@ -98,7 +99,7 @@ function updateAccordion( alarm ){
     var close = "</article>";
     $('#accordion').append(header+open+desc+countdown+button+close)
     $('#accordion').accordion('refresh')
-    getCounters();
+    //getCounters();
 }
 
 // Loop through article elements, add timers to each one
