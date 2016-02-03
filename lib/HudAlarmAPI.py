@@ -16,17 +16,23 @@ class Alarm(WebHandlers.BaseHandler):
         data['description'] = self.stringutil.sanitize(data['description'])
         data['description'] = markdown.markdown(data['description'])
         data['alarm_id'] = self.generator.random_string()
+        print data
         response = self.database.addAlarm(data)
-        if response['status'] == 'success':
+        if response['status'] == 'ok':
+            # Set all client updateDue bits except for the one that is calling
+            response = self.database.setUpdateDue(data['uuid'])
+            self.finish(response)
+        elif response['status'] == 'error':
+            self.logger.error(response)
             self.finish(response)
         else:
-            self.logger.error(response)
             self.finish(response)
 
     def delete(self, a_alarm):
         self.logger.debug('Deleting: %s from database' % a_alarm)
         response = self.database.deleteAlarm(a_alarm)
         self.finish(response)
+
 
 class Heartbeat(WebHandlers.BaseHandler):
     def get(self):
@@ -46,14 +52,21 @@ class Heartbeat(WebHandlers.BaseHandler):
         now = datetime.datetime.now()
         data['start'] = now
         data['end'] = now + datetime.timedelta(minutes=1)
-        self.logger.debug(data['uuid'])
         if data['uuid'] != '' or data['uuid']:
+            update = self.database.getUpdateDue(data['uuid'])[0]
             response = self.database.updateClient(data)
+            if update['refresh'] == 0 or update['refresh'] == '0':
+                response['refresh'] = 0
+                print response
+            elif update['refresh'] == 1 or update['refresh'] == '1':
+                response['refresh'] = 1
+                print response
             self.logger.debug(response)
             self.set_status(200,'Client updated')
             self.finish(response)
         else:
             data['uuid'] = str(uuid.uuid4())
+            data['refresh'] = '0'
             response = self.database.addClient(data)
             self.logger.debug(response)
             self.set_status(201,'Client Added')

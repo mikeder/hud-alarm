@@ -36,13 +36,14 @@ class AlarmDatabase:
 
     ## Client Table Methods
     def addClient(self, a_client):
-        sql = "INSERT INTO client(start, end, uuid, address, focus, url)\
-               VALUES('{0}','{1}','{2}','{3}','{4}','{5}')".format(a_client['start'],
-                                                                   a_client['end'],
-                                                                   a_client['uuid'],
-                                                                   a_client['address'],
-                                                                   a_client['focus'],
-                                                                   a_client['url'])
+        sql = "INSERT INTO client(start, end, uuid, address, focus, url, refresh)\
+               VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')".format(a_client['start'],
+                                                                         a_client['end'],
+                                                                         a_client['uuid'],
+                                                                         a_client['address'],
+                                                                         a_client['focus'],
+                                                                         a_client['url'],
+                                                                         a_client['refresh'])
         response = self.__updateDB(sql)
         if response['status'] == 'ok':
             response['client'] = a_client['uuid']
@@ -52,13 +53,13 @@ class AlarmDatabase:
 
     def getClients(self, a_client=None):
         if a_client:
-            sql = "SELECT * FROM client where uuid = '{0}'".format(a_client)
+            sql = "SELECT * FROM client WHERE uuid = '{0}'".format(a_client)
         else:
             sql = "SELECT * FROM client"
         return self.__queryDB(sql)
 
     def updateClient(self, a_client):
-        sql = "UPDATE client SET end = '{0}', focus = '{1}' WHERE uuid = '{2}'".\
+        sql = "UPDATE client SET end = '{0}', focus = '{1}', refresh = 0 WHERE uuid = '{2}'".\
             format(a_client['end'],
                    a_client['focus'],
                    a_client['uuid'],
@@ -70,6 +71,18 @@ class AlarmDatabase:
             pass
         return response
 
+    def setUpdateDue(self, a_uuid=None):
+        if a_uuid:
+            sql = "UPDATE client SET refresh = 1 WHERE uuid != '{0}'".format(a_uuid)
+        else:
+            sql = "UPDATE client SET refresh = 1"
+        response = self.__updateDB(sql)
+        return response
+
+    def getUpdateDue(self, a_uuid):
+        sql = "SELECT refresh FROM client WHERE uuid = '{0}'".format(a_uuid)
+        response = self.__queryDB(sql)
+        return response
 
     ## Internal Class Methods
     def __updateDB(self, sql):
@@ -168,6 +181,7 @@ class AlarmDatabase:
             uuid TEXT,
             address TEXT,
             focus INTEGER,
+            refresh INTEGER,
             url TEXT)'''
         cursor = self.database.cursor()
         cursor.execute(sql)

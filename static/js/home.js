@@ -53,7 +53,13 @@ function poll() {
                 console.log(data)
                 hideMessage();
                 document.cookie = data.client;
-                poll();  //call your function again after successfully calling the first time.
+                if (data.refresh == 1){
+                    console.log('New data available, refreshing page')
+                    setTimeout(function(){location.reload(true);}, 100);
+                } else {
+                    console.log('No new data available')
+                    poll();  //call your function again after successfully calling the first time.
+                }
             },
             error: function(data) {
                 showMessage('error','Error connecting to server...');
@@ -180,11 +186,13 @@ $(function() {
 
     function addEvent() {
         var valid = true;
+        var uuid = document.cookie;
         var data = { 'title': $( "#title" ).val(),
         'description': $( "#description" ).val(),
         'endtime': datetime.val(),
         'open': $( "#open" ).val(),
-        'close': 'None'}
+        'close': 'None',
+        'client': uuid}
         if ( valid ) {
             $.ajax({
                 url: '/api/alarm',
