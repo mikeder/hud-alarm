@@ -29,11 +29,11 @@ function getAlarms(){
     console.log('getAlarms()')
     $.getJSON('/api/alarm', function(data){
         var alarms = data.alarms;
-        if (alarms.length > 0) {
+        if (alarms == null) {
+            console.log('There are NO alarms')
+        } else {
             alarms.forEach(updateAccordion);
             getCounters();
-        } else {
-            console.log('There are NO alarms')
         }
     })
 }
@@ -62,8 +62,8 @@ function poll() {
                     poll();  //call your function again after successfully calling the first time.
                 }
             },
-            error: function(data) {
-                showMessage('error','Error connecting to server...');
+            error: function(xhr, textStatus, error) {
+                showMessage('error','<strong>Error:</strong> connection to server failed, retrying...');
                 setTimeout(poll(), 5000);
             }
         });
@@ -154,7 +154,7 @@ function deleteAlarm( alarm_id ){
         type: 'DELETE',
         success: function(data) {
             showMessage('',data.message);
-            setTimeout(function(){location.reload(true);}, 100);
+            setTimeout(function(){location.reload(true);}, 200);
         },
         error: function(data) {
             showMessage('error',data.message);
@@ -165,15 +165,15 @@ function deleteAlarm( alarm_id ){
 
 // Display Banner Message
 function showMessage( type, msg ){
-    var newClass = 'ui-state-highlight'
+    var newClass = 'alert alert-success fade in'
     if (type == 'error') {
-        newClass = 'ui-state-error'
+        newClass = 'alert alert-danger fade in'
     }
     $("#banner").html(msg).addClass(newClass);
 }
 
 function hideMessage(){
-    $("#banner").html('').removeClass('ui-state-error ui-corner-all');
+    $("#banner").html('').removeClass('alert alert-danger fade in');
 }
 
 //Begin JQuery UI Modal Dialog

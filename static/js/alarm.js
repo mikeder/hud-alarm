@@ -4,18 +4,45 @@ var url = window.location.href;
 window.onblur = function () {hasFocus = '0';}
 window.onfocus = function () {hasFocus = '1';}
 
+function addLoadEvent(func) {
+  var oldonload = window.onload;
+  if (typeof window.onload != 'function') {
+    window.onload = func;
+  } else {
+    window.onload = function() {
+      if (oldonload) {
+        oldonload();
+      }
+      func();
+    }
+  }
+}
+
+addLoadEvent(poll);
+
 // Start heartbeat
-window.onload = function poll() {
+function poll() {
+    console.log('poll()')
     setTimeout( function() {
-        var data = { 'hasFocus': hasFocus,
-                     'url': url }
+        var uuid = document.cookie;
+        var data = { 'focus': hasFocus,
+                     'url': url,
+                     'uuid': uuid };
         $.ajax({
             url: '/api/heartbeat',
             type: 'POST',
             data: JSON.stringify(data),
             success: function(data) {
-                hideMessage;
-                poll();  //call your function again after successfully calling the first time.
+                console.log(data)
+                hideMessage();
+                document.cookie = data.client;
+                if (data.refresh == 1){
+                    console.log('New data available, refreshing page')
+                    setTimeout(function(){location.reload(true);}, 100);
+                } else {
+                    console.log('No new data available')
+                    poll();  //call your function again after successfully calling the first time.
+                }
             },
             error: function(data) {
                 showMessage('error','Error connecting to server...');
@@ -23,7 +50,7 @@ window.onload = function poll() {
             }
         });
     }, 5000);
-};
+}
 
 // Countdown
 $('[data-countdown]').each(function() {
@@ -34,9 +61,23 @@ $('[data-countdown]').each(function() {
    })
      .on('finish.countdown', function(event) {
         PlaySound("sound1");
-        setTimeout(window.close(), 10000);
+        FlashBanner()
+        window.setTimeout(CloseMe, 5000);
      });
 });
+
+function FlashBanner(){
+    setTimeout(showMessage('error', 'Alert'), 1000)
+    setTimeout(hideMessage(), 1000)
+    setTimeout(showMessage('error', 'Alert'), 1000)
+    setTimeout(hideMessage(), 1000)
+    setTimeout(showMessage('error', 'Alert'), 1000)
+}
+
+function CloseMe()
+{
+    window.close();
+}
 
 $('#close').click(function(e) {
     e.preventDefault();
@@ -58,5 +99,5 @@ function showMessage( type, msg ){
 }
 
 function hideMessage(){
-    $("#banner").html(msg).removeClass('ui-state-error ui-corner-all');
+    $("#banner").html('').removeClass('ui-state-error ui-corner-all');
 }
