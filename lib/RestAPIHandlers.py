@@ -27,11 +27,12 @@ class Alarm(WebHandlers.BaseHandler):
         else:
             self.finish(response)
 
-    def delete(self, a_alarm):
-        self.logger.debug('Deleting: %s from database' % a_alarm)
+    def delete(self):
+        data = json.loads(self.request.body)
+        self.logger.debug('Deleting: %s from database' % data['alarm_id'])
         # Set all client updateDue bits except for the one that is calling
-        response = self.database.deleteAlarm(a_alarm)
-        self.database.setUpdateDue()
+        response = self.database.deleteAlarm(data['alarm_id'])
+        self.database.setUpdateDue(data['uuid'])
         self.finish(response)
 
 

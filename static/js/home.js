@@ -156,12 +156,16 @@ function triggerAlarmOpen( alarm_id ) {
 // Delete Alarm
 function deleteAlarm( alarm_id ){
     console.log('deleteAlarm()' + alarm_id)
+    var uuid = document.cookie;
+    var data = { 'alarm_id': alarm_id,
+                 'uuid': uuid }
     $.ajax({
-        url: '/api/alarm/' + alarm_id,
+        url: '/api/alarm',
         type: 'DELETE',
+        data: JSON.stringify(data),
         success: function(data) {
             showMessage('',data.message);
-            setTimeout(function(){location.reload(true);}, 200);
+            setTimeout(function(){location.reload(true);}, 100);
         },
         error: function(data) {
             showMessage('error',data.message);
@@ -193,19 +197,17 @@ $(function() {
         });
 
     function addEvent() {
-        var valid = true;
         var uuid = document.cookie;
         var data = { 'title': $( "#title" ).val(),
-        'description': $( "#description" ).val(),
-        'endtime': datetime.val(),
-        'open': $( "#open" ).val(),
-        'close': 'None',
-        'uuid': uuid}
-        if ( valid ) {
-            $.ajax({
-                url: '/api/alarm',
-                type: 'POST',
-                data: JSON.stringify(data),
+                     'description': $( "#description" ).val(),
+                     'endtime': datetime.val(),
+                     'open': $( "#open" ).val(),
+                     'close': 'None',
+                     'uuid': uuid }
+        $.ajax({
+            url: '/api/alarm',
+            type: 'POST',
+            data: JSON.stringify(data),
             success: function(data) {
                 showMessage('',data.message);
                 setTimeout(function(){location.reload(true);}, 100);
@@ -214,10 +216,8 @@ $(function() {
                 showMessage('error',data.message);
                 setTimeout(function(){location.reload(true);}, 8000);
             }
-            });
-            dialog.dialog( "close" );
-        }
-        return valid;
+        });
+        dialog.dialog( "close" );
     }
 
     dialog = $( "#dialog-form" ).dialog({

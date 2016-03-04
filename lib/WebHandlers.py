@@ -31,7 +31,3 @@ class Alarm(tornado.web.RequestHandler):
 class Home(BaseHandler):
     def get(self):
         self.render('home.html')
-
-class Test(BaseHandler):
-    def get(self):
-        self.render('test.html')

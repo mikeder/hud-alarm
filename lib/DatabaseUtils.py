@@ -11,13 +11,14 @@ class AlarmDatabase:
 
     ## Alarm Table Methods
     def addAlarm(self, a_alarm):
-        sql = "INSERT INTO alarm(endtime,title,description,alarm_id,open,close)" \
-              " VALUES('{0}','{1}','{2}','{3}','{4}','{5}')".format(a_alarm['endtime'],
-                                                                    a_alarm['title'],
-                                                                    a_alarm['description'],
-                                                                    a_alarm['alarm_id'],
-                                                                    a_alarm['open'],
-                                                                    a_alarm['close'])
+        sql = "INSERT INTO alarm(endtime,title,description,alarm_id,open,close,expired)" \
+              " VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')".format(a_alarm['endtime'],
+                                                                          a_alarm['title'],
+                                                                          a_alarm['description'],
+                                                                          a_alarm['alarm_id'],
+                                                                          a_alarm['open'],
+                                                                          a_alarm['close'],
+                                                                          a_alarm['expired'])
         response = self.__updateDB(sql)
         return response
 
@@ -26,11 +27,18 @@ class AlarmDatabase:
         response = self.__updateDB(sql)
         return response
 
-    def getAlarms(self, a_alarm_id=None):
+    def expireAlarm(self, a_alarm_id):
+        sql = "UPDATE alarm SET expired = 1 WHERE alarm_id = '{0}'".format(a_alarm_id)
+        response = self.__updateDB(sql)
+        return response
+
+    def getAlarms(self, a_alarm_id=None, is_expired=False):
         if a_alarm_id:
-            sql = "SELECT * FROM alarm where alarm_id = '{0}'".format(a_alarm_id)
+            sql = "SELECT * FROM alarm WHERE alarm_id = '{0}'".format(a_alarm_id)
+        elif is_expired:
+            sql = "SELECT * FROM alarm WHERE expired = 1 ORDER BY endtime ASC"
         else:
-            sql = "SELECT * FROM alarm ORDER BY endtime ASC"
+            sql = "SELECT * FROM alarm WHERE expired = 0 ORDER BY endtime ASC"
         return self.__queryDB(sql)
 
 
@@ -167,7 +175,8 @@ class AlarmDatabase:
             description TEXT,
             alarm_id TEXT,
             open INTEGER,
-            close INTEGER)'''
+            close INTEGER
+            expired INTEGER)'''
         cursor = self.database.cursor()
         cursor.execute(sql)
         self.database.commit()
