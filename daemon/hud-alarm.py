@@ -4,8 +4,8 @@ cwd = os.getcwd()
 sys.path.append(cwd)
 import getopt
 import json
-from lib import HudAlarmAPI
-from lib import HudAlarmDatabase
+from lib import RestAPIHandlers
+from lib import DatabaseUtils
 from lib import WebHandlers
 import logging
 import tornado.httpserver
@@ -44,9 +44,9 @@ class Application(tornado.web.Application):
             (r'/', WebHandlers.Home),
             (r'/alarm/([A-Za-z0-9]+)', WebHandlers.Alarm),
             (r'/test', WebHandlers.Test),
-            (r'/api/alarm', HudAlarmAPI.Alarm),
-            (r'/api/alarm/([A-Za-z0-9]+)', HudAlarmAPI.Alarm),
-            (r'/api/heartbeat', HudAlarmAPI.Heartbeat),
+            (r'/api/alarm', RestAPIHandlers.Alarm),
+            (r'/api/alarm/([A-Za-z0-9]+)', RestAPIHandlers.Alarm),
+            (r'/api/heartbeat', RestAPIHandlers.Heartbeat),
             (r'.*', WebHandlers.BaseHandler)
         ]
 
@@ -72,7 +72,7 @@ class Application(tornado.web.Application):
         # Check for active clients every check_interval
         #self.check_interval = config['client']['check_interval']
         # Single Database connection across all handlers
-        self.database = HudAlarmDatabase.AlarmDatabase(config['database'])
+        self.database = DatabaseUtils.AlarmDatabase(config['database'])
 
 def main():
     http_server = tornado.httpserver.HTTPServer(Application())

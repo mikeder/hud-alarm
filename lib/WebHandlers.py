@@ -1,15 +1,15 @@
 import logging
 import tornado.web
 import tornado.ioloop
-from lib import Utilities
+from lib import AppUtils
 
 
 class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, application, request, **kwargs):
         super(BaseHandler, self).__init__(application, request)
         self.logger = logging.getLogger(__name__)
-        self.generator = Utilities.Generator()
-        self.stringutil = Utilities.StringUtil()
+        self.generator = AppUtils.Generator()
+        self.stringutil = AppUtils.StringUtil()
 
     def write_error(self, status_code, **kwargs):
         self.render("error.html", error=status_code)
