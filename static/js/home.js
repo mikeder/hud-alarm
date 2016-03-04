@@ -1,6 +1,3 @@
-// Initial setup of UI Accordion
-$('#accordion').accordion({collapsible: true, active: false, heightStyle: "content"});
-
 // Check focus of page
 var hasFocus = '1';
 var url = window.location.href;
@@ -56,7 +53,7 @@ function poll() {
                 document.cookie = data.client;
                 if (data.refresh == 1){
                     console.log('New data available, refreshing page')
-                    setTimeout(function(){location.reload(true);}, 100);
+                    clearAccordion();
                 } else {
                     console.log('No new data available')
                     poll();  //call your function again after successfully calling the first time.
@@ -84,6 +81,7 @@ function startListeners(){
 // Add an alarm to the accordion
 function updateAccordion( alarm ){
     console.log('updateAccordion()')
+    $('#accordion').accordion({collapsible: true, active: false, heightStyle: "content"});
     var counter = "<p id='"+alarm.alarm_id+"'></p>";
     var header = "<h3>"+alarm.title+" - "+alarm.endtime+"</h3>";
     var open = "<article data-endtime='"+alarm.endtime+"'data-alarmid='"+alarm.alarm_id+"' data-open='"+alarm.open+"'>";
@@ -100,6 +98,15 @@ function updateAccordion( alarm ){
     $('#accordion').append(header+open+desc+countdown+button+close)
     $('#accordion').accordion('refresh')
     //getCounters();
+}
+
+// Clear accordion prior to rebuilding
+function clearAccordion(){
+    console.log('clearAccordion()')
+    $('#accordion').accordion('destroy');   // removes accordion bits
+    $('#accordion').empty();                // clears the contents
+    getAlarms();
+    poll();
 }
 
 // Loop through article elements, add timers to each one
