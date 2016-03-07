@@ -5,7 +5,7 @@ import sqlite3
 class AlarmDatabase:
     def __init__(self, a_config):
         self.logger = logging.getLogger('AlarmDB')
-        self.database = sqlite3.connect(a_config['name'])
+        self.database = sqlite3.connect(a_config['location'] + a_config['name'])
         self.current_version = a_config['version']
         self.__upgradeDatabase()
 
@@ -101,15 +101,13 @@ class AlarmDatabase:
             self.database.commit()
             return {
                     'status': 'ok',
-                    'message': 'Update successful.'
-                }
+                    'message': 'Update successful.' }
         except Exception as err:
             self.logger.error('\033[1;91mThere was an error while updating the database\033[1;m')
             self.logger.error('\033[1;91m%s\033[1;m' % (err, ))
             return {
                     'status': 'error',
-                    'message': err
-                }
+                    'message': err  }
 
     def __queryDB(self, sql):
         self.database.text_factory = str

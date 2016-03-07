@@ -5,6 +5,7 @@
     "template_path": "templates"
   },
   "database": {
+    "location": "data/",
     "name": "hud-alarm.db",
     "version": 1
   },

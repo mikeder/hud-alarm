@@ -60,7 +60,7 @@ function poll() {
                 }
             },
             error: function(xhr, textStatus, error) {
-                showMessage('error','<strong>Error:</strong> connection to server failed, retrying...');
+                showMessage('error','<strong>Error:</strong> connection to server failed('+error+'), retrying...');
                 setTimeout(poll(), 5000);
             }
         });
@@ -212,9 +212,9 @@ $(function() {
                 showMessage('',data.message);
                 setTimeout(function(){location.reload(true);}, 100);
             },
-            error: function(data) {
-                showMessage('error',data.message);
-                setTimeout(function(){location.reload(true);}, 8000);
+            error: function(xhr, textStatus, error) {
+                showMessage('error','<strong>Error:</strong> '+error);
+                setTimeout(poll(), 5000);
             }
         });
         dialog.dialog( "close" );
