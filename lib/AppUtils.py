@@ -44,3 +44,13 @@ class StringUtil():
             if char in a_string:
                 a_string = a_string.replace(char, '\''+char)
         return a_string
+
+class AlarmUtil():
+    @property
+    def database(self):
+        return self.application.database
+
+    def checkExpired(self):
+        alarms = self.database.getAlarms()
+        for alarm in alarms:
+            print alarm

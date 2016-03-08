@@ -4,6 +4,7 @@ cwd = os.getcwd()
 sys.path.append(cwd)
 import getopt
 import json
+from lib import AppUtils
 from lib import RestAPIHandlers
 from lib import DatabaseUtils
 from lib import WebHandlers
