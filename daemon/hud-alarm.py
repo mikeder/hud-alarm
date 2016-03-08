@@ -61,14 +61,14 @@ class Application(tornado.web.Application):
 
         # Setup Global Logging
         loglevel = getattr(logging, config['logging']['log_level'].upper())
-        loglocation = config['logging']['log_location'] + 'hud-alarm.log'
-        logger = logging.getLogger('HUD-Alarm')
-        logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(name)s : %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename=loglocation, level=loglevel)
+        loglocation = config['logging']['log_location'] + config['logging']['log_name']
+        logger = logging.getLogger(__name__)
+        logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(name)s : %(message)s',
+                            datefmt='%m/%d/%Y %I:%M:%S %p',
+                            filename=loglocation,
+                            level=loglevel)
         logger.info("Initializing HUD-Alarm")
 
-        # Provide global application properties
-        # Check for active clients every check_interval
-        #self.check_interval = config['client']['check_interval']
         # Single Database connection across all handlers
         self.database = DatabaseUtils.AlarmDatabase(config['database'])
 

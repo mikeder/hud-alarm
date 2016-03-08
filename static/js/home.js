@@ -87,15 +87,15 @@ function updateAccordion( alarm ){
     var open = "<article data-endtime='"+alarm.endtime+"'data-alarmid='"+alarm.alarm_id+"' data-open='"+alarm.open+"'>";
     if(alarm.description.length > 1){
         console.log('updateAccorion(): w/ description')
-        var desc = "<b>Perform the following: </b>"+alarm.description;
+        var desc = "<b>Description: </b>"+alarm.description+"<hr>";
     }else{
         console.log('updateAccordion(): no description')
         var desc = '';
     }
-    var countdown = "<b>Time Remaining: </b>"+counter+"<hr>";
+    var countdown = "<b>Time Remaining: </b>"+counter;
     var button = "<button class='delete btn btn-danger' style='float: right;' value='"+alarm.alarm_id+"'>Delete</button>"
     var close = "</article>";
-    $('#accordion').append(header+open+desc+countdown+button+close)
+    $('#accordion').append(header+open+countdown+desc+button+close)
     $('#accordion').accordion('refresh')
     //getCounters();
 }
@@ -164,7 +164,7 @@ function deleteAlarm( alarm_id ){
         type: 'DELETE',
         data: JSON.stringify(data),
         success: function(data) {
-            showMessage('',data.message);
+            //showMessage('',data.message);
             setTimeout(function(){location.reload(true);}, 100);
         },
         error: function(data) {
@@ -209,7 +209,7 @@ $(function() {
             type: 'POST',
             data: JSON.stringify(data),
             success: function(data) {
-                showMessage('',data.message);
+                //showMessage('',data.message);
                 setTimeout(function(){location.reload(true);}, 100);
             },
             error: function(xhr, textStatus, error) {

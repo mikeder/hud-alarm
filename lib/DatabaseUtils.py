@@ -4,13 +4,14 @@ import sqlite3
 
 class AlarmDatabase:
     def __init__(self, a_config):
-        self.logger = logging.getLogger('AlarmDB')
+        self.logger = logging.getLogger(__name__)
         self.database = sqlite3.connect(a_config['location'] + a_config['name'])
         self.current_version = a_config['version']
         self.__upgradeDatabase()
 
     ## Alarm Table Methods
     def addAlarm(self, a_alarm):
+        a_alarm['expired'] = 0
         sql = "INSERT INTO alarm(endtime,title,description,alarm_id,open,close,expired)" \
               " VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')".format(a_alarm['endtime'],
                                                                           a_alarm['title'],
@@ -173,7 +174,7 @@ class AlarmDatabase:
             description TEXT,
             alarm_id TEXT,
             open INTEGER,
-            close INTEGER
+            close INTEGER,
             expired INTEGER)'''
         cursor = self.database.cursor()
         cursor.execute(sql)

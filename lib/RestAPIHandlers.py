@@ -2,9 +2,29 @@ import datetime
 import json
 import markdown
 import uuid
-from lib import WebHandlers
+import logging
+import tornado.web
+import tornado.ioloop
+from lib import AppUtils
 
-class Alarm(WebHandlers.BaseHandler):
+
+class BaseHandler(tornado.web.RequestHandler):
+    def __init__(self, application, request, **kwargs):
+        super(BaseHandler, self).__init__(application, request)
+        self.logger = logging.getLogger(__name__)
+        self.generator = AppUtils.Generator()
+        self.stringutil = AppUtils.StringUtil()
+
+    def write_error(self, status_code, **kwargs):
+        self.render("error.html", error=status_code)
+
+    # Properties provided by Application in hud-alarm.py
+    @property
+    def database(self):
+        return self.application.database
+
+
+class Alarm(BaseHandler):
     def get(self):
         alarms = self.database.getAlarms()
         self.finish({'alarms':alarms})
@@ -36,7 +56,7 @@ class Alarm(WebHandlers.BaseHandler):
         self.finish(response)
 
 
-class Heartbeat(WebHandlers.BaseHandler):
+class Heartbeat(BaseHandler):
     def get(self):
         clients = self.database.getClients()
         if clients:
@@ -55,19 +75,30 @@ class Heartbeat(WebHandlers.BaseHandler):
         data['start'] = now
         data['end'] = now + datetime.timedelta(minutes=1)
         if data['uuid'] != '' or data['uuid']:
-            update = self.database.getUpdateDue(data['uuid'])[0]
-            response = self.database.updateClient(data)
-            if update['refresh'] == 0 or update['refresh'] == '0':
-                response['refresh'] = 0
-            elif update['refresh'] == 1 or update['refresh'] == '1':
-                response['refresh'] = 1
-            self.logger.debug(response)
-            self.set_status(200,'Client updated')
-            self.finish(response)
+            try:
+                update = self.database.getUpdateDue(data['uuid'])[0]
+                response = self.database.updateClient(data)
+                if update['refresh'] == 0 or update['refresh'] == '0':
+                    response['refresh'] = 0
+                elif update['refresh'] == 1 or update['refresh'] == '1':
+                    response['refresh'] = 1
+                self.logger.debug(response)
+                self.set_status(200,'Client updated')
+                self.finish(response)
+            except TypeError as e:
+                response = self.__addClient(data)
+                self.logger.debug(response)
+                self.set_status(201,'Client Added')
+                self.finish(response)
         else:
-            data['uuid'] = str(uuid.uuid4())
-            data['refresh'] = '0'
-            response = self.database.addClient(data)
+            response = self.__addClient(data)
             self.logger.debug(response)
             self.set_status(201,'Client Added')
             self.finish(response)
+
+
+    def __addClient(self, data):
+        data['uuid'] = str(uuid.uuid4())
+        data['refresh'] = '0'
+        response = self.database.addClient(data)
+        return response
