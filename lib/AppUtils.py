@@ -54,3 +54,13 @@ class AlarmUtil():
         alarms = self.database.getAlarms()
         for alarm in alarms:
             print alarm
+
+
+class ClientUtils():
+    @property
+    def database(self):
+        return self.application.database
+
+    def validateClient(self, client_uuid):
+        valid = self.database.getClients(client_uuid)
+        print valid

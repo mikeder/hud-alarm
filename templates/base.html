@@ -21,7 +21,7 @@
 
   <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-inverse">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -31,6 +31,9 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="/">{{ escape(handler.settings['title']) }}</a>
+        </div>
+        <div class="nav navbar-text navbar-right">
+          <button id="addEvent" class="btn btn-success btn-xs">Add Event</button>
         </div>
       </div>
     </nav>

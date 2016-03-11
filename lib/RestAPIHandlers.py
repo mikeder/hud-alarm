@@ -14,6 +14,7 @@ class BaseHandler(tornado.web.RequestHandler):
         self.logger = logging.getLogger(__name__)
         self.generator = AppUtils.Generator()
         self.stringutil = AppUtils.StringUtil()
+        self.clientutil = AppUtils.ClientUtils()
 
     def write_error(self, status_code, **kwargs):
         self.render("error.html", error=status_code)
@@ -102,3 +103,8 @@ class Heartbeat(BaseHandler):
         data['refresh'] = '0'
         response = self.database.addClient(data)
         return response
+
+
+class Test(BaseHandler):
+    def get(self):
+        self.clientutil.validateClient("")

@@ -1,6 +1,6 @@
 {
   "client": {
-    "title": "HUD Alarm",
+    "title": "Upcoming Events",
     "static_path": "static",
     "template_path": "templates"
   },

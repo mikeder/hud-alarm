@@ -61,22 +61,16 @@ $('[data-countdown]').each(function() {
    })
      .on('finish.countdown', function(event) {
         PlaySound("sound1");
-        FlashBanner()
-        window.setTimeout(CloseMe, 5000);
+        FlashBanner();
      });
 });
 
 function FlashBanner(){
-    setTimeout(showMessage('error', 'Alert'), 1000)
-    setTimeout(hideMessage(), 1000)
-    setTimeout(showMessage('error', 'Alert'), 1000)
-    setTimeout(hideMessage(), 1000)
-    setTimeout(showMessage('error', 'Alert'), 1000)
-}
-
-function CloseMe()
-{
-    window.close();
+    setTimeout(showMessage('error', 'Alert'), 1000);
+    setTimeout(showMessage('', 'Time is up'), 1000);
+    setTimeout(showMessage('error', 'Alert'), 1000);
+    setTimeout(showMessage('', 'Time is up'), 1000);
+    setTimeout(showMessage('error', 'Alert'), 1000);
 }
 
 $('#close').click(function(e) {

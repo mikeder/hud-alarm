@@ -19,11 +19,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def database(self):
         return self.application.database
 
-class Alarm(tornado.web.RequestHandler):
-    @property
-    def database(self):
-        return self.application.database
-
+class Alarm(BaseHandler):
     def get(self, a_alarm_id):
         alarm = self.database.getAlarms(a_alarm_id)[0]
         self.render('alarm.html', alarm=alarm)
