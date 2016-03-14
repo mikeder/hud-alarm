@@ -24,10 +24,8 @@ addLoadEvent(poll);
 function poll() {
     console.log('poll()')
     setTimeout( function() {
-        var uuid = document.cookie;
         var data = { 'focus': hasFocus,
-                     'url': url,
-                     'uuid': uuid };
+                     'url': url };
         $.ajax({
             url: '/api/heartbeat',
             type: 'POST',
@@ -35,7 +33,6 @@ function poll() {
             success: function(data) {
                 console.log(data)
                 hideMessage();
-                document.cookie = data.client;
                 if (data.refresh == 1){
                     console.log('New data available, refreshing page')
                     setTimeout(function(){location.reload(true);}, 100);
@@ -62,15 +59,16 @@ $('[data-countdown]').each(function() {
      .on('finish.countdown', function(event) {
         PlaySound("sound1");
         FlashBanner();
+        setTimeout(closeMe(), 10000);
      });
 });
 
 function FlashBanner(){
     setTimeout(showMessage('error', 'Alert'), 1000);
-    setTimeout(showMessage('', 'Time is up'), 1000);
-    setTimeout(showMessage('error', 'Alert'), 1000);
-    setTimeout(showMessage('', 'Time is up'), 1000);
-    setTimeout(showMessage('error', 'Alert'), 1000);
+    setTimeout(showMessage('', 'Time is up'), 2000);
+    setTimeout(showMessage('error', 'Alert'), 3000);
+    setTimeout(showMessage('', 'Time is up'), 4000);
+    setTimeout(showMessage('error', 'Alert'), 5000);
 }
 
 $('#close').click(function(e) {
@@ -82,6 +80,11 @@ $('#close').click(function(e) {
 function PlaySound(soundObj) {
   document.getElementById(soundObj).play();
 };
+
+// Close Alarm
+function closeMe() {
+    window.close();
+}
 
 // Display Banner Message
 function showMessage( type, msg ){

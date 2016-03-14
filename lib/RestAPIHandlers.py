@@ -33,6 +33,7 @@ class Alarm(BaseHandler):
     def post(self):
         self.logger.debug('Received new alarm: %s' % self.request.body)
         data = json.loads(self.request.body)
+        data['uuid'] = self.get_secure_cookie('client_uuid')
         data['title'] = self.stringutil.sanitize(data['title'])
         data['description'] = self.stringutil.sanitize(data['description'])
         data['description'] = markdown.markdown(data['description'])
@@ -48,6 +49,7 @@ class Alarm(BaseHandler):
         else:
             self.finish(response)
 
+    @tornado.web.authenticated
     def delete(self):
         data = json.loads(self.request.body)
         self.logger.debug('Deleting: %s from database' % data['alarm_id'])
@@ -75,7 +77,8 @@ class Heartbeat(BaseHandler):
         now = datetime.datetime.now()
         data['start'] = now
         data['end'] = now + datetime.timedelta(minutes=1)
-        if data['uuid'] != '' or data['uuid']:
+        data['uuid'] = self.get_secure_cookie('client_uuid')
+        if data['uuid']:
             try:
                 update = self.database.getUpdateDue(data['uuid'])[0]
                 response = self.database.updateClient(data)
@@ -99,8 +102,10 @@ class Heartbeat(BaseHandler):
 
 
     def __addClient(self, data):
-        data['uuid'] = str(uuid.uuid4())
+        client_uuid = str(uuid.uuid4())
+        self.set_secure_cookie('client_uuid',client_uuid)
         data['refresh'] = '0'
+        data['uuid'] = client_uuid
         response = self.database.addClient(data)
         return response
 
