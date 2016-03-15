@@ -24,7 +24,6 @@ class BaseHandler(tornado.web.RequestHandler):
     def database(self):
         return self.application.database
 
-
 class Alarm(BaseHandler):
     def get(self):
         alarms = self.database.getAlarms()

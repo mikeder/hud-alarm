@@ -59,16 +59,15 @@ $('[data-countdown]').each(function() {
      .on('finish.countdown', function(event) {
         PlaySound("sound1");
         FlashBanner();
-        setTimeout(closeMe(), 10000);
+        setTimeout(closeMe, 10000);
      });
 });
 
 function FlashBanner(){
-    setTimeout(showMessage('error', 'Alert'), 1000);
-    setTimeout(showMessage('', 'Time is up'), 2000);
-    setTimeout(showMessage('error', 'Alert'), 3000);
-    setTimeout(showMessage('', 'Time is up'), 4000);
-    setTimeout(showMessage('error', 'Alert'), 5000);
+    $('#banner').html('<strong>Alert: </strong> Time has expired!').addClass('alert alert-danger fade in')
+    $('#banner').delay(500).fadeIn('normal', function() {
+      $(this).delay(2500).fadeOut();
+    });
 }
 
 $('#close').click(function(e) {
@@ -88,13 +87,13 @@ function closeMe() {
 
 // Display Banner Message
 function showMessage( type, msg ){
-    var newClass = 'ui-state-highlight'
+    var newClass = 'alert alert-success fade in'
     if (type == 'error') {
-        newClass = 'ui-state-error'
+        newClass = 'alert alert-danger fade in'
     }
     $("#banner").html(msg).addClass(newClass);
 }
 
 function hideMessage(){
-    $("#banner").html('').removeClass('ui-state-error ui-corner-all');
+    $("#banner").html('').removeClass('alert alert-danger fade in');
 }
