@@ -48,7 +48,7 @@ class Alarm(BaseHandler):
         else:
             self.finish(response)
 
-    # @tornado.web.authenticated
+    @tornado.web.authenticated
     def delete(self):
         data = json.loads(self.request.body)
         self.logger.debug('Deleting: %s from database' % data['alarm_id'])
