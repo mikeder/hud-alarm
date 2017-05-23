@@ -52,7 +52,7 @@ class Application(tornado.web.Application):
 
         # Define application settings
         settings = dict(
-            cookie_secret='xszbEDcnm9QDqyPdW8XluPfvOGxOlJ',
+            cookie_secret='<<SECRET>>',
             title=config['client']['title'],
             template_path=config['client']['template_path'],
             static_path=config['client']['static_path'],
