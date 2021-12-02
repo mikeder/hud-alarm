@@ -1,11 +1,13 @@
-import json
 import logging
+import os
 import sqlite3
 
 class AlarmDatabase:
     def __init__(self, a_config):
+        dbloc = a_config['location'] + a_config['name']
+        os.makedirs(a_config['location'])
         self.logger = logging.getLogger(__name__)
-        self.database = sqlite3.connect(a_config['location'] + a_config['name'])
+        self.database = sqlite3.connect(dbloc)
         self.current_version = a_config['version']
         self.__upgradeDatabase()
 
@@ -80,16 +82,16 @@ class AlarmDatabase:
             pass
         return response
 
-    def setUpdateDue(self, a_uuid=None):
+    def setUpdateDue(self, a_uuid:str=None):
         if a_uuid:
-            sql = "UPDATE client SET refresh = 1 WHERE uuid != '{0}'".format(a_uuid)
+            sql = "UPDATE client SET refresh = 1 WHERE uuid != {0}".format(str(a_uuid))
         else:
             sql = "UPDATE client SET refresh = 1"
         response = self.__updateDB(sql)
         return response
 
     def getUpdateDue(self, a_uuid):
-        sql = "SELECT refresh FROM client WHERE uuid = '{0}'".format(a_uuid)
+        sql = "SELECT refresh FROM client WHERE uuid = {0}".format(str(a_uuid))
         response = self.__queryDB(sql)
         return response
 
@@ -100,15 +102,11 @@ class AlarmDatabase:
             self.logger.debug(sql)
             cursor.execute(sql)
             self.database.commit()
-            return {
-                    'status': 'ok',
-                    'message': 'Update successful.' }
+            return
         except Exception as err:
             self.logger.error('\033[1;91mThere was an error while updating the database\033[1;m')
             self.logger.error('\033[1;91m%s\033[1;m' % (err, ))
-            return {
-                    'status': 'error',
-                    'message': err  }
+            raise
 
     def __queryDB(self, sql):
         self.database.text_factory = str

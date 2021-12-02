@@ -53,7 +53,7 @@ class AlarmUtil():
     def checkExpired(self):
         alarms = self.database.getAlarms()
         for alarm in alarms:
-            print alarm
+            print(alarm)
 
 
 class ClientUtils():
@@ -63,4 +63,4 @@ class ClientUtils():
 
     def validateClient(self, client_uuid):
         valid = self.database.getClients(client_uuid)
-        print valid
+        print(valid)

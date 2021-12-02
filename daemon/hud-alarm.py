@@ -31,14 +31,14 @@ class Application(tornado.web.Application):
             if opt in ('-c', '--config'):
                 config_path = arg
             else:
-                print 'Invalid flag: ', opt
+                print('Invalid flag: ', opt)
                 sys.exit(2)
         # Finally load config file
         try:
             with open(config_path) as config_file:
                  config = json.load(config_file)
         except:
-            print 'Invalid config file: ', config_path
+            print('Invalid config file: ', config_path)
             sys.exit(2)
 
         routes = [
@@ -64,12 +64,23 @@ class Application(tornado.web.Application):
 
         # Setup Global Logging
         loglevel = getattr(logging, config['logging']['log_level'].upper())
-        loglocation = config['logging']['log_location'] + config['logging']['log_name']
+        loglocation = config['logging']['log_location']
+        logformat = '[%(levelname)s] %(asctime)s - %(name)s : %(message)s'
+        datefmt='%m/%d/%Y %I:%M:%S %p'
         logger = logging.getLogger(__name__)
-        logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(name)s : %(message)s',
-                            datefmt='%m/%d/%Y %I:%M:%S %p',
-                            filename=loglocation,
-                            level=loglevel)
+
+        if config['logging']['log_to_file']:
+            logging.basicConfig(
+                filename=loglocation,
+                format=logformat,
+                datefmt=datefmt,
+                level=loglevel)
+        else:
+            logging.basicConfig(
+                format=logformat,
+                datefmt=datefmt,
+                level=loglevel)
+            
         logger.info("Initializing HUD-Alarm")
 
         # Single Database connection across all handlers

@@ -1,20 +1,20 @@
 {
-  "client": {
-    "title": "Upcoming Events",
-    "static_path": "static",
-    "template_path": "templates"
-  },
-  "database": {
-    "location": "data/",
-    "name": "hud-alarm.db",
-    "version": 1
-  },
-  "logging": {
-    "log_location": "/var/log/hud-alarm/",
-    "log_name": "hud-alarm.log",
-    "log_level": "DEBUG"
-  },
-  "server": {
-    "port": 8001
-  }
+    "client": {
+        "title": "Upcoming Events",
+        "static_path": "static",
+        "template_path": "templates"
+    },
+    "database": {
+        "location": "data/",
+        "name": "hud-alarm.db",
+        "version": 1
+    },
+    "logging": {
+        "log_to_file": false,
+        "log_location": "/opt/hud-alarm/app.log",
+        "log_level": "DEBUG"
+    },
+    "server": {
+        "port": 8001
+    }
 }
